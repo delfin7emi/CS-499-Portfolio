@@ -1,34 +1,48 @@
-
 public class Dog extends RescueAnimal {
 
-    // Instance variable
+    // Specific attribute for Dog
     private String breed;
 
-    // Constructor
-    public Dog(String name, String breed, String gender, String age,
-    String weight, String acquisitionDate, String acquisitionCountry,
-	String trainingStatus, boolean reserved, String inServiceCountry) {
+    // Default constructor
+    public Dog() {
+        super(); // Calls parent constructor
+    }
+
+    // Constructor used in Driver.java
+    public Dog(String name, String breed, String gender, int age, float weight,
+               String acquisitionDate, String acquisitionCountry, String trainingStatus,
+               boolean reserved, String inServiceCountry) {
+
+        super(); // Required before using setters
+
         setName(name);
-        setBreed(breed);
         setGender(gender);
         setAge(age);
         setWeight(weight);
         setAcquisitionDate(acquisitionDate);
-        setAcquisitionLocation(acquisitionCountry);
+        setAcquisitionSource(acquisitionCountry);
         setTrainingStatus(trainingStatus);
         setReserved(reserved);
         setInServiceCountry(inServiceCountry);
 
+        this.breed = breed;
     }
 
-    // Accessor Method
+    // Getter for breed
     public String getBreed() {
         return breed;
     }
 
-    // Mutator Method
-    public void setBreed(String dogBreed) {
-        breed = dogBreed;
+   
+    public void setBreed(String breed) {
+        this.breed = breed;
     }
 
+    public String getAcquisitionCountry() {
+        return super.getAcquisitionCountry();
+    }
+
+    public String getInServiceCountry() {
+        return super.getInServiceCountry();
+    }
 }

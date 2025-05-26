@@ -1,0 +1,27 @@
+[
+    {
+      "name": "Rex",
+      "breed": "Labrador",
+      "gender": "male",
+      "age": "4",
+      "weight": "30",
+      "acqDate": "01-01-2022",
+      "acqCountry": "USA",
+      "trainingStatus": "in service",
+      "reserved": "false",
+      "inService": "USA"
+    },
+    {
+      "name": "Bella",
+      "breed": "German Shepherd",
+      "gender": "female",
+      "age": "3",
+      "weight": "28",
+      "acqDate": "02-12-2021",
+      "acqCountry": "Canada",
+      "trainingStatus": "training",
+      "reserved": "true",
+      "inService": "Canada"
+    }
+  ]
+  
