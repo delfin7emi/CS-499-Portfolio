@@ -1,6 +1,8 @@
 // server.js
 // ===========================
-// Express server for Dogs and Monkeys API
+// Express server for Grazioso Rescue Animal System
+// Includes Dogs, Monkeys, and Authentication API
+// CS-499 Enhancement: Algorithms and Data Structures
 // ===========================
 
 const express = require("express");
@@ -8,55 +10,78 @@ const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
 
+// Auth controller for login system enhancement (username/password + Big O logic)
+const authController = require('./authController'); 
+
 const app = express();
 const PORT = 3000;
 
-// Middleware to enable CORS and parse JSON requests
-app.use(cors());
-app.use(express.json());
+// Middleware
+app.use(cors()); // Allow cross-origin requests
+app.use(express.json()); // Parse incoming JSON
 
-// File paths
+// Register authentication routes
+app.use('/auth', authController); // Enhancement: Security + Big O validated logic
+
+// File paths for persistence
 const dogsFile = path.join(__dirname, "dogs.json");
 const monkeysFile = path.join(__dirname, "monkeys.json");
 
-// Root route (for testing if API is live)
+// ===========================
+// Root route (Basic API health check)
+// ===========================
 app.get("/", (req, res) => {
-  res.send("API is running. Use /dogs or /monkeys endpoints.");
+  res.send("API is running. Use /dogs, /monkeys, or /auth endpoints.");
 });
 
 // ===========================
 // DOGS ENDPOINTS
 // ===========================
 
-// GET /dogs - return all dogs
+// GET /dogs - Returns all dogs, with optional query filters
 app.get("/dogs", (req, res) => {
   fs.readFile(dogsFile, "utf8", (err, data) => {
     if (err) {
-      console.error("Failed to read dogs.json:", err);
       return res.status(500).json({ error: "Failed to read dogs file." });
     }
     try {
-      const dogs = JSON.parse(data);
+      let dogs = JSON.parse(data); // O(n)
+
+      // Optional query filters: O(n)
+      const { name, status } = req.query;
+
+      if (name) {
+        dogs = dogs.filter(dog => dog.name.toLowerCase().includes(name.toLowerCase())); // O(n)
+      }
+
+      if (status) {
+        dogs = dogs.filter(dog => dog.status.toLowerCase() === status.toLowerCase()); // O(n)
+      }
+
       res.json(dogs);
-    } catch (parseErr) {
-      res.status(500).json({ error: "Invalid JSON format in dogs file." });
+    } catch {
+      res.status(500).json({ error: "Invalid JSON in dogs file." });
     }
   });
 });
 
-// POST /dogs - add new dog
+
+// POST /dogs - Add a new dog
 app.post("/dogs", (req, res) => {
   const newDog = req.body;
+
+  // Read-modify-write: O(n) for read and write combined
   fs.readFile(dogsFile, "utf8", (err, data) => {
     let dogs = [];
     if (!err && data) {
       try {
-        dogs = JSON.parse(data);
+        dogs = JSON.parse(data); // O(n)
       } catch (parseErr) {
         return res.status(500).json({ error: "Invalid JSON in dogs file." });
       }
     }
-    dogs.push(newDog);
+
+    dogs.push(newDog); // O(1)
     fs.writeFile(dogsFile, JSON.stringify(dogs, null, 2), (err) => {
       if (err) {
         return res.status(500).json({ error: "Could not save dog data." });
@@ -70,35 +95,48 @@ app.post("/dogs", (req, res) => {
 // MONKEYS ENDPOINTS
 // ===========================
 
-// GET /monkeys - return all monkeys
+// GET /monkeys - Returns all monkeys, with optional query filters
 app.get("/monkeys", (req, res) => {
   fs.readFile(monkeysFile, "utf8", (err, data) => {
     if (err) {
-      console.error("Failed to read monkeys.json:", err);
       return res.status(500).json({ error: "Failed to read monkeys file." });
     }
     try {
-      const monkeys = JSON.parse(data);
+      let monkeys = JSON.parse(data); // O(n)
+
+      const { name, species } = req.query;
+
+      if (name) {
+        monkeys = monkeys.filter(monkey => monkey.name.toLowerCase().includes(name.toLowerCase())); // O(n)
+      }
+
+      if (species) {
+        monkeys = monkeys.filter(monkey => monkey.species.toLowerCase() === species.toLowerCase()); // O(n)
+      }
+
       res.json(monkeys);
-    } catch (parseErr) {
-      res.status(500).json({ error: "Invalid JSON format in monkeys file." });
+    } catch {
+      res.status(500).json({ error: "Invalid JSON in monkeys file." });
     }
   });
 });
 
-// POST /monkeys - add new monkey
+
+// POST /monkeys - Add a new monkey
 app.post("/monkeys", (req, res) => {
   const newMonkey = req.body;
+
   fs.readFile(monkeysFile, "utf8", (err, data) => {
     let monkeys = [];
     if (!err && data) {
       try {
-        monkeys = JSON.parse(data);
+        monkeys = JSON.parse(data); // O(n)
       } catch (parseErr) {
         return res.status(500).json({ error: "Invalid JSON in monkeys file." });
       }
     }
-    monkeys.push(newMonkey);
+
+    monkeys.push(newMonkey); // O(1)
     fs.writeFile(monkeysFile, JSON.stringify(monkeys, null, 2), (err) => {
       if (err) {
         return res.status(500).json({ error: "Could not save monkey data." });
