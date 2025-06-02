@@ -1,27 +1,20 @@
 [
-    {
-      "name": "Rex",
-      "breed": "Labrador",
-      "gender": "male",
-      "age": "4",
-      "weight": "30",
-      "acqDate": "01-01-2022",
-      "acqCountry": "USA",
-      "trainingStatus": "in service",
-      "reserved": "false",
-      "inService": "USA"
-    },
-    {
-      "name": "Bella",
-      "breed": "German Shepherd",
-      "gender": "female",
-      "age": "3",
-      "weight": "28",
-      "acqDate": "02-12-2021",
-      "acqCountry": "Canada",
-      "trainingStatus": "training",
-      "reserved": "true",
-      "inService": "Canada"
-    }
-  ]
-  
+  {
+    "name": "Rex",
+    "breed": "German Shepherd",
+    "trainingStatus": "In Service",
+    "reserved": true
+  },
+  {
+    "name": "Bella",
+    "breed": "Labrador",
+    "trainingStatus": "In Training",
+    "reserved": false
+  },
+  {
+    "name": "Duke",
+    "breed": "Golden Retriever",
+    "trainingStatus": "In Service",
+    "reserved": false
+  }
+]

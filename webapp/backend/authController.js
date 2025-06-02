@@ -1,76 +1,96 @@
 // authController.js
+// =======================================
+// Handles user registration and login securely
+// =======================================
+
+require('dotenv-flow').config(); // Load environment variables
 
 const express = require('express');
 const bcrypt = require('bcrypt');
 const fs = require('fs');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+const zxcvbn = require('zxcvbn'); // Password strength checking
 
 const router = express.Router();
-
-// File path for persistent storage
+const JWT_SECRET = process.env.JWT_SECRET;
 const usersFile = path.join(__dirname, 'users.json');
 
-// Utility: Read users from file (O(1) assuming small file, or O(n) worst-case linear scan)
+// Load user data
 function loadUsers() {
-    try {
-        const data = fs.readFileSync(usersFile, 'utf-8');
-        return JSON.parse(data);
-    } catch (err) {
-        return {};
-    }
+  try {
+    const data = fs.readFileSync(usersFile, 'utf8');
+    return JSON.parse(data);
+  } catch (err) {
+    return {};
+  }
 }
 
-// Utility: Save users to file (O(n))
+// Save user data
 function saveUsers(users) {
-    fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
+  fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
 }
 
+// ===========================
 // POST /auth/register
+// ===========================
 router.post('/register', async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    // Input validation: O(n) regex match
-    const validUsername = /^[a-zA-Z0-9]{4,15}$/.test(username);
-    const validPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(password);
-    if (!validUsername || !validPassword) {
-        return res.status(400).json({ message: 'Invalid username or password format.' });
-    }
+  const validUsername = /^[a-zA-Z0-9]{4,15}$/.test(username);
+  const validPassword = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/.test(password);
 
-    const users = loadUsers();
+  if (!validUsername || !validPassword) {
+    return res.status(400).json({
+      message: 'Invalid username or password format.'
+    });
+  }
 
-    if (users[username]) {
-        return res.status(409).json({ message: 'Username already exists.' });
-    }
+  // Check password strength
+  const strength = zxcvbn(password);
+  if (strength.score < 2) {
+    return res.status(400).json({
+      message: 'Password is too weak. Try adding more characters, numbers, or symbols.'
+    });
+  }
 
-    // Hash password securely: O(n) where n = hash rounds
-    const hashedPassword = await bcrypt.hash(password, 10);
-    users[username] = hashedPassword;
+  const users = loadUsers();
 
-    // Save user persistently: O(n)
-    saveUsers(users);
+  if (users[username]) {
+    return res.status(409).json({ message: 'Username already exists.' });
+  }
 
-    res.status(201).json({ message: 'User registered.' });
+  const hashedPassword = await bcrypt.hash(password, 10);
+  users[username] = hashedPassword;
+
+  saveUsers(users);
+
+  return res.status(201).json({ message: 'User registered successfully.' });
 });
 
+// ===========================
 // POST /auth/login
+// ===========================
 router.post('/login', async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
+  const users = loadUsers();
+  const storedHash = users[username];
 
-    const users = loadUsers();
-    const storedHash = users[username];
+  if (!storedHash) {
+    return res.status(400).json({ message: 'Invalid username or password.' });
+  }
 
-    // Existence check: O(1)
-    if (!storedHash) {
-        return res.status(400).json({ message: 'Invalid username or password.' });
-    }
+  const match = await bcrypt.compare(password, storedHash);
+  if (!match) {
+    return res.status(400).json({ message: 'Invalid username or password.' });
+  }
 
-    // Hash comparison: O(n)
-    const match = await bcrypt.compare(password, storedHash);
-    if (!match) {
-        return res.status(400).json({ message: 'Invalid username or password.' });
-    }
+  const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: '1h' });
 
-    res.json({ message: 'Login successful.' });
+  return res.status(200).json({
+    message: 'Login successful.',
+    token
+  });
 });
 
 module.exports = router;

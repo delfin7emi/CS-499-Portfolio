@@ -1,63 +1,58 @@
 // server.js
 // ===========================
-// Express server for Grazioso Rescue Animal System
-// Includes Dogs, Monkeys, and Authentication API
-// CS-499 Enhancement: Algorithms and Data Structures
+// Grazioso Rescue API Backend
+// Includes Dogs, Monkeys, Authentication, and Search APIs
+// CS-499 Enhancement: Algorithms and Data Structures + Security
 // ===========================
 
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
-
-// Auth controller for login system enhancement (username/password + Big O logic)
-const authController = require('./authController'); 
+const authenticateToken = require('./authMiddleware'); // JWT middleware
+const authController = require('./authController');    // /auth routes
+const rateLimit = require('express-rate-limit'); //  New
 
 const app = express();
 const PORT = 3000;
 
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: 'Too many requests from this IP, please try again later.'
+});
+
+// ===========================
 // Middleware
-app.use(cors()); // Allow cross-origin requests
-app.use(express.json()); // Parse incoming JSON
+// ===========================
+app.use(cors());                    // Enables CORS support
+app.use(express.json());           // Automatically parses JSON payloads
+app.use(limiter);
+app.use('/auth', authController);  // Handles /auth/register and /auth/login
 
-// Register authentication routes
-app.use('/auth', authController); // Enhancement: Security + Big O validated logic
-
-// File paths for persistence
+// ===========================
+// File Paths (JSON "DB")
+// ===========================
 const dogsFile = path.join(__dirname, "dogs.json");
 const monkeysFile = path.join(__dirname, "monkeys.json");
 
 // ===========================
-// Root route (Basic API health check)
+// Health Check Endpoint
 // ===========================
 app.get("/", (req, res) => {
-  res.send("API is running. Use /dogs, /monkeys, or /auth endpoints.");
+  res.send("API is running. Use /auth, /dogs, /monkeys, /dogs/search, /monkeys/search");
 });
 
 // ===========================
-// DOGS ENDPOINTS
+// Dogs Endpoints (Protected)
 // ===========================
 
-// GET /dogs - Returns all dogs, with optional query filters
-app.get("/dogs", (req, res) => {
+// GET all dogs
+app.get("/dogs", authenticateToken, (req, res) => {
   fs.readFile(dogsFile, "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: "Failed to read dogs file." });
-    }
+    if (err) return res.status(500).json({ error: "Could not read dogs file." });
     try {
-      let dogs = JSON.parse(data); // O(n)
-
-      // Optional query filters: O(n)
-      const { name, status } = req.query;
-
-      if (name) {
-        dogs = dogs.filter(dog => dog.name.toLowerCase().includes(name.toLowerCase())); // O(n)
-      }
-
-      if (status) {
-        dogs = dogs.filter(dog => dog.status.toLowerCase() === status.toLowerCase()); // O(n)
-      }
-
+      const dogs = JSON.parse(data);
       res.json(dogs);
     } catch {
       res.status(500).json({ error: "Invalid JSON in dogs file." });
@@ -65,90 +60,114 @@ app.get("/dogs", (req, res) => {
   });
 });
 
-
-// POST /dogs - Add a new dog
-app.post("/dogs", (req, res) => {
+// POST new dog
+app.post("/dogs", authenticateToken, (req, res) => {
   const newDog = req.body;
-
-  // Read-modify-write: O(n) for read and write combined
   fs.readFile(dogsFile, "utf8", (err, data) => {
     let dogs = [];
     if (!err && data) {
       try {
-        dogs = JSON.parse(data); // O(n)
-      } catch (parseErr) {
-        return res.status(500).json({ error: "Invalid JSON in dogs file." });
+        dogs = JSON.parse(data);
+      } catch {
+        return res.status(500).json({ error: "Corrupted dogs file." });
       }
     }
-
-    dogs.push(newDog); // O(1)
+    dogs.push(newDog);
     fs.writeFile(dogsFile, JSON.stringify(dogs, null, 2), (err) => {
-      if (err) {
-        return res.status(500).json({ error: "Could not save dog data." });
-      }
+      if (err) return res.status(500).json({ error: "Failed to save dog." });
       res.status(201).json({ message: "Dog saved", dog: newDog });
     });
   });
 });
 
-// ===========================
-// MONKEYS ENDPOINTS
-// ===========================
-
-// GET /monkeys - Returns all monkeys, with optional query filters
-app.get("/monkeys", (req, res) => {
-  fs.readFile(monkeysFile, "utf8", (err, data) => {
-    if (err) {
-      return res.status(500).json({ error: "Failed to read monkeys file." });
-    }
+// GET dogs with query filters
+app.get("/dogs/search", authenticateToken, (req, res) => {
+  fs.readFile(dogsFile, "utf8", (err, data) => {
+    if (err) return res.status(500).json({ error: "Could not read dogs file." });
     try {
-      let monkeys = JSON.parse(data); // O(n)
-
-      const { name, species } = req.query;
+      let dogs = JSON.parse(data);
+      const { name, status, reserved } = req.query;
 
       if (name) {
-        monkeys = monkeys.filter(monkey => monkey.name.toLowerCase().includes(name.toLowerCase())); // O(n)
+        dogs = dogs.filter(d => d.name?.toLowerCase().includes(name.toLowerCase()));
+      }
+      if (status) {
+        dogs = dogs.filter(d => d.trainingStatus?.toLowerCase() === status.toLowerCase());
+      }
+      if (reserved) {
+        const reservedBool = reserved.toLowerCase() === "true";
+        dogs = dogs.filter(d => String(d.reserved).toLowerCase() === String(reservedBool));
       }
 
+      res.json({ count: dogs.length, results: dogs });
+    } catch {
+      res.status(500).json({ error: "Invalid JSON in dogs file." });
+    }
+  });
+});
+
+// ===========================
+// Monkeys Endpoints (Protected)
+// ===========================
+
+// GET monkeys with optional filters
+app.get("/monkeys/search", authenticateToken, (req, res) => {
+  fs.readFile(monkeysFile, "utf8", (err, data) => {
+    if (err) return res.status(500).json({ error: "Could not read monkeys file." });
+    try {
+      let monkeys = JSON.parse(data);
+      const { name, species, reserved } = req.query;
+
+      if (name) {
+        monkeys = monkeys.filter(m => m.name?.toLowerCase().includes(name.toLowerCase()));
+      }
       if (species) {
-        monkeys = monkeys.filter(monkey => monkey.species.toLowerCase() === species.toLowerCase()); // O(n)
+        monkeys = monkeys.filter(m => m.species?.toLowerCase() === species.toLowerCase());
+      }
+      if (reserved) {
+        const reservedBool = reserved.toLowerCase() === "true";
+        monkeys = monkeys.filter(m => String(m.reserved).toLowerCase() === String(reservedBool));
       }
 
-      res.json(monkeys);
+      res.json({ count: monkeys.length, results: monkeys });
     } catch {
       res.status(500).json({ error: "Invalid JSON in monkeys file." });
     }
   });
 });
 
-
-// POST /monkeys - Add a new monkey
-app.post("/monkeys", (req, res) => {
+// POST new monkey
+app.post("/monkeys", authenticateToken, (req, res) => {
   const newMonkey = req.body;
-
   fs.readFile(monkeysFile, "utf8", (err, data) => {
     let monkeys = [];
     if (!err && data) {
       try {
-        monkeys = JSON.parse(data); // O(n)
-      } catch (parseErr) {
-        return res.status(500).json({ error: "Invalid JSON in monkeys file." });
+        monkeys = JSON.parse(data);
+      } catch {
+        return res.status(500).json({ error: "Corrupted monkeys file." });
       }
     }
-
-    monkeys.push(newMonkey); // O(1)
+    monkeys.push(newMonkey);
     fs.writeFile(monkeysFile, JSON.stringify(monkeys, null, 2), (err) => {
-      if (err) {
-        return res.status(500).json({ error: "Could not save monkey data." });
-      }
+      if (err) return res.status(500).json({ error: "Failed to save monkey." });
       res.status(201).json({ message: "Monkey saved", monkey: newMonkey });
     });
   });
 });
 
 // ===========================
-// Start server
+// Conditional Server Launch
+// Only start the server if NOT in test environment
+// Required so tests can import the app without running the server twice
 // ===========================
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
+let serverInstance = null;
+
+if (process.env.NODE_ENV !== 'test') {
+  serverInstance = app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+  });
+}
+
+// Export app and server instance for use in test files
+module.exports = { app, server: serverInstance };
