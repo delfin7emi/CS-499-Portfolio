@@ -1,33 +1,26 @@
 [
-    {
-      "name": "Kiki",
-      "species": "Capuchin",
-      "gender": "female",
-      "age": "5",
-      "weight": "15",
-      "tailLength": "30",
-      "height": "45",
-      "bodyLength": "50",
-      "acqDate": "03-10-2021",
-      "acqCountry": "Brazil",
-      "trainingStatus": "in service",
-      "reserved": "false",
-      "inService": "USA"
-    },
-    {
-      "name": "Bongo",
-      "species": "Macaque",
-      "gender": "male",
-      "age": "6",
-      "weight": "17",
-      "tailLength": "28",
-      "height": "42",
-      "bodyLength": "48",
-      "acqDate": "06-20-2022",
-      "acqCountry": "India",
-      "trainingStatus": "training",
-      "reserved": "true",
-      "inService": "UK"
-    }
-  ]
-  
+  {
+    "name": "Chico",
+    "species": "Capuchin",
+    "tailLength": "45cm",
+    "height": "35cm",
+    "weight": "7kg",
+    "reserved": false
+  },
+  {
+    "name": "Lola",
+    "species": "Capuchin",
+    "tailLength": "43cm",
+    "height": "33cm",
+    "weight": "6.5kg",
+    "reserved": true
+  },
+  {
+    "name": "Zuri",
+    "species": "Marmoset",
+    "tailLength": "30cm",
+    "height": "25cm",
+    "weight": "3kg",
+    "reserved": false
+  }
+]
