@@ -1,53 +1,78 @@
-# CS-499-Portfolio# 
+#  CS-499 Portfolio – Algorithms and Data Structures Enhancement
 
-CS-499 Portfolio – Algorithms and Data Structure Enhancement
+This enhancement showcases the application of algorithmic logic and data structure optimization in a full-stack rescue animal management system. It expands the original Java-based Grazioso Salvare project by integrating:
 
-## 🧠 Enhancement Two: Algorithms and Data Structure
+- A Node.js + Express RESTful backend
+- Binary search for efficient data retrieval
+- Secure authentication with JWT
+- Automated testing with Jest and Supertest
 
-This enhancement demonstrates the application of algorithmic principles and data structure efficiency through a secure, token-based animal rescue system. It expands the original Java-based project by introducing a fully functional **Node.js backend API**, **user authentication**, **search algorithms**, and **security best practices**.
+This work supports Capstone Outcome 2: **"Employ algorithms and data structures in program design."**
 
 ---
 
-## 🔧 Key Enhancements
+##  Key Enhancements
 
-### ✅ Efficient Data Filtering with Search API
+###  Efficient Search API with Binary Search
 - Implemented `/dogs/search` and `/monkeys/search` endpoints
-- Added support for filtering by species, name, and reservation status
-- Optimized loop-based search logic with linear filtering (O(n))
+- Searches by `id` use a custom **binary search** utility (`binarySearch.js`)
+- Sorted arrays with `localeCompare()` for accurate alphanumeric ID comparison
+- Filters also available by `name`, `species`, `trainingStatus`, and `reserved` status
 
-### ✅ User Authentication with JWT
-- Added `/auth/register` and `/auth/login` endpoints
-- Passwords hashed with **bcrypt**
-- Token generation with **jsonwebtoken**
-- Token expiration set to 1 hour for security
+###  Custom Binary Search Algorithm
+- Binary search implemented from scratch
+- Time complexity: **O(log n)** for ID lookups
+- Unit tested separately in `binarySearch.test.js`
+- Used in production endpoints for optimal performance
 
-### ✅ Middleware Authorization
-- Protected animal search endpoints with `Authorization: Bearer <token>`
-- Tokens validated via a middleware function for route protection
-
-### ✅ Password Strength Validation
-- Integrated **zxcvbn** to evaluate password complexity during registration
-- Prevents weak passwords from being accepted
-
-### ✅ Rate Limiting
-- Added protection against brute-force attacks using **express-rate-limit**
-- Limits requests to 100 per 15-minute window
-
-### ✅ Environment-Based Configuration
-- Used `.env.development`, `.env.production`, and `dotenv-flow`
-- Keeps secrets and tokens secure per environment
+###  Robust Fallback Filtering
+- If no `id` is provided, fallbacks apply:
+  - Name → partial match
+  - Species or trainingStatus → exact match (case-insensitive)
+  - Reserved status → boolean filter
 
 ---
 
-## 🧪 Testing
+##  Security
 
-All unit tests for authentication, dog/monkey search, and error cases are implemented using **Jest** and **Supertest**.
+###  JWT Authentication
+- Secure user registration/login using `jsonwebtoken`
+- Passwords hashed with `bcrypt`
+- Token expires in 1 hour
+- Token required for all protected routes
 
-### ✅ Test Suites:
+###  Middleware Authorization
+- JWT middleware validates requests on:
+  - `/dogs`, `/monkeys`
+  - `/dogs/search`, `/monkeys/search`
+  - `/dogs` and `/monkeys` POST routes
+
+###  Password Strength Enforcement
+- Uses `zxcvbn` to evaluate complexity
+- Prevents weak passwords during registration
+
+###  Rate Limiting
+- Limits requests to 100 per 15 minutes
+- Helps prevent brute-force attacks
+
+###  Environment Variables
+- Uses `.env`, `.env.development`, `.env.production` to store secrets
+- Secured with `dotenv-flow`
+
+---
+
+##  Automated Testing
+
+All enhancements are backed by complete unit/integration tests using **Jest** and **Supertest**.
+
+###  Test Suites:
 - `authController.test.js`
 - `dogSearch.test.js`
 - `monkeySearch.test.js`
+- `dogPost.test.js`
+- `monkeyPost.test.js`
+- `binarySearch.test.js`
 
+###  Coverage
 ```bash
-npm install
-npm test
+npm test -- --coverage
