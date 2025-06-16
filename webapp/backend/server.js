@@ -1,219 +1,189 @@
-// server.js
 // ============================================
 // Grazioso Rescue API Backend
-// Includes Dogs, Monkeys, Authentication, and Search APIs
-// Enhancement: Algorithms & Data Structures (Binary Search)
-// Enhancement: Security (Rate Limiting, Token Auth)
+// Enhancements:
+//   - Modular middleware/controllers
+//   - MongoDB with Mongoose
+//   - Secure JWT authentication
+//   - Binary Search ID lookup
+//   - Express Rate Limiting & Logging
 // ============================================
+
+require("dotenv").config();
+require("module-alias/register");
 
 const express = require("express");
-const cors = require("cors");
-const fs = require("fs");
-const path = require("path");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
-const authController = require("./authController"); // Handles /auth/register and /auth/login
-const authenticateToken = require("./authMiddleware"); // Middleware to protect endpoints
-const binarySearch = require(path.join(__dirname, "utils", "binarySearch")); // Enhanced binary search utility
+const cors = require("cors");
 
+// Load environment variables
+dotenv.config();
+
+// ==================== Import Middleware and Utils ====================
+const authenticateToken = require("@middleware/authMiddleware"); // Ensure correct alias is used
+const validateDog = require("@middleware/validateDog");
+const validateMonkey = require("@middleware/validateMonkey");
+const binarySearch = require("@utils/binarySearch"); // Ensure the path is correct
+const authController = require("@controllers/authController");
+
+// ==================== Import Mongoose Models ====================
+const Dog = require("@models/Dogs");
+const Monkey = require("@models/Monkeys");
+
+// ==================== App Initialization ====================
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const dbName = process.env.NODE_ENV === "test" ? "grazioso_test" : "grazioso";
 
-// ============================================
-// Middleware Setup
-// ============================================
-app.use(cors()); // Allow CORS
-app.use(express.json()); // Parse JSON bodies
+// ==================== Connect to MongoDB ====================
+mongoose.connect(`mongodb://127.0.0.1:27017/${dbName}`, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log(`MongoDB connected to ${dbName}`))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-// Apply rate limiting: 100 requests per 15 minutes per IP
-app.use(
-  rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 100,
-    message: "Too many requests from this IP, please try again later.",
-  })
-);
+// ==================== Middleware Setup ====================
+app.use(cors());
+app.use(express.json());
+app.use(morgan("dev"));
 
-// Authentication endpoints
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: "Too many requests, please try again later.",
+}));
+
+// ==================== Routes ====================
+
+// Auth Routes
 app.use("/auth", authController);
 
-// ============================================
-// File paths to JSON data (mock database files)
-// ============================================
-const dogsFile = path.join(__dirname, "dogs.json");
-const monkeysFile = path.join(__dirname, "monkeys.json");
-
-// ============================================
-// Health Check Route
-// ============================================
+// Health Check
 app.get("/", (req, res) => {
-  res.send("API is running. Use /auth, /dogs, /monkeys, /dogs/search, /monkeys/search");
+  res.send("Grazioso Rescue API is running. Endpoints: /auth, /dogs, /monkeys");
 });
 
-// ============================================
-// GET all dogs (Protected)
-// ============================================
-app.get("/dogs", authenticateToken, (req, res) => {
-  fs.readFile(dogsFile, "utf8", (err, data) => {
-    if (err) return res.status(500).json({ error: "Could not read dogs file." });
+// ---------------- DOG ROUTES ----------------
 
-    try {
-      const dogs = JSON.parse(data);
-      res.json(dogs);
-    } catch {
-      res.status(500).json({ error: "Invalid JSON in dogs file." });
-    }
-  });
+// POST /dogs - Add new dog
+app.post("/dogs", authenticateToken, validateDog, async (req, res) => {
+  try {
+    const exists = await Dog.findOne({ id: req.body.id });
+    if (exists) return res.status(409).json({ error: "Duplicate dog ID" });
+
+    const dog = new Dog(req.body);
+    await dog.save();
+    res.status(201).json({ message: "Dog created", dog });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
-// ============================================
-// POST new dog (Protected)
-// ============================================
-app.post("/dogs", authenticateToken, (req, res) => {
-  const newDog = req.body;
+// GET /dogs - Retrieve dogs with query filters
+app.get("/dogs", authenticateToken, async (req, res) => {
+  try {
+    const query = {};
+    if (req.query.name) query.name = new RegExp(req.query.name, "i");
+    if (req.query.trainingStatus) query.trainingStatus = req.query.trainingStatus;
+    if (req.query.reserved) query.reserved = req.query.reserved === "true";
 
-  fs.readFile(dogsFile, "utf8", (err, data) => {
-    let dogs = [];
-
-    if (!err && data) {
-      try {
-        dogs = JSON.parse(data);
-      } catch {
-        return res.status(500).json({ error: "Corrupted dogs file." });
-      }
-    }
-
-    dogs.push(newDog);
-
-    fs.writeFile(dogsFile, JSON.stringify(dogs, null, 2), (err) => {
-      if (err) return res.status(500).json({ error: "Failed to save dog." });
-      res.status(201).json({ message: "Dog saved", dog: newDog });
-    });
-  });
+    const dogs = await Dog.find(query);
+    res.status(200).json({ count: dogs.length, results: dogs });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// ============================================
-// GET dogs with filters (Enhanced: Binary Search by ID + Fallbacks)
-// ============================================
-app.get("/dogs/search", authenticateToken, (req, res) => {
-  fs.readFile(dogsFile, "utf8", (err, data) => {
-    if (err) return res.status(500).json({ error: "Could not read dogs file." });
+// GET /dogs/search?id=D123 - Search dog by ID using binary search
+app.get("/dogs/search", authenticateToken, async (req, res) => {
+  try {
+    const { id, name, trainingStatus, reserved } = req.query;
+    const dogs = await Dog.find({});
+    const sorted = dogs.sort((a, b) => a.id.localeCompare(b.id));
 
-    try {
-      let dogs = JSON.parse(data);
-      const { id, name, status, reserved } = req.query;
-
-      // Binary search on sorted array
-      if (id) {
-        dogs.sort((a, b) => a.id.localeCompare(b.id)); // Ensure sorted by ID
-        const found = binarySearch(dogs, id);
-
-        if (found) {
-          return res.status(200).json({ count: 1, results: [found] });
-        } else {
-          return res.status(404).json({ error: "Dog not found with given ID." });
-        }
-      }
-
-
-      // Fallback filters
-      if (name) {
-        dogs = dogs.filter((d) => d.name?.toLowerCase().includes(name.toLowerCase()));
-      }
-      if (status) {
-        dogs = dogs.filter((d) => d.trainingStatus?.toLowerCase() === status.toLowerCase());
-      }
-      if (reserved) {
-        const reservedBool = reserved.toLowerCase() === "true";
-        dogs = dogs.filter((d) => String(d.reserved).toLowerCase() === String(reservedBool));
-      }
-
-      res.status(200).json({ count: dogs.length, results: dogs });
-    } catch {
-      res.status(500).json({ error: "Invalid JSON in dogs file." });
-    }
-  });
-});
-
-// ============================================
-// GET monkeys with filters (Enhanced: Binary Search by ID + Fallbacks)
-// ============================================
-app.get("/monkeys/search", authenticateToken, (req, res) => {
-  fs.readFile(monkeysFile, "utf8", (err, data) => {
-    if (err) return res.status(500).json({ error: "Could not read monkeys file." });
-
-    try {
-      let monkeys = JSON.parse(data);
-      const { id, name, species, reserved } = req.query;
-
-      if (id) {
-        monkeys.sort((a, b) => a.id.localeCompare(b.id));
-        const found = binarySearch(monkeys, id);
-
-        if (found) {
-          return res.status(200).json({ count: 1, results: [found] });
-        } else {
-          return res.status(404).json({ error: "Monkey not found with given ID." });
-        }
-      }
-
-
-      // Fallbacks
-      if (name) {
-        monkeys = monkeys.filter((m) => m.name?.toLowerCase().includes(name.toLowerCase()));
-      }
-      if (species) {
-        monkeys = monkeys.filter((m) => m.species?.toLowerCase() === species.toLowerCase());
-      }
-      if (reserved) {
-        const reservedBool = reserved.toLowerCase() === "true";
-        monkeys = monkeys.filter((m) => String(m.reserved).toLowerCase() === String(reservedBool));
-      }
-
-      res.status(200).json({ count: monkeys.length, results: monkeys });
-    } catch {
-      res.status(500).json({ error: "Invalid JSON in monkeys file." });
-    }
-  });
-});
-
-// ============================================
-// POST new monkey (Protected)
-// ============================================
-app.post("/monkeys", authenticateToken, (req, res) => {
-  const newMonkey = req.body;
-
-  fs.readFile(monkeysFile, "utf8", (err, data) => {
-    let monkeys = [];
-
-    if (!err && data) {
-      try {
-        monkeys = JSON.parse(data);
-      } catch {
-        return res.status(500).json({ error: "Corrupted monkeys file." });
-      }
+    if (id) {
+      const found = binarySearch(sorted, id);
+      return found
+        ? res.status(200).json({ count: 1, results: [found] })
+        : res.status(404).json({ error: "Dog not found" });
     }
 
-    monkeys.push(newMonkey);
+    let filtered = sorted;
+    if (name) filtered = filtered.filter(d => d.name.toLowerCase().includes(name.toLowerCase()));
+    if (trainingStatus) filtered = filtered.filter(d => d.trainingStatus === trainingStatus);
+    if (reserved) filtered = filtered.filter(d => d.reserved === (reserved === "true"));
 
-    fs.writeFile(monkeysFile, JSON.stringify(monkeys, null, 2), (err) => {
-      if (err) return res.status(500).json({ error: "Failed to save monkey." });
-      res.status(201).json({ message: "Monkey saved", monkey: newMonkey });
-    });
-  });
+    res.status(200).json({ count: filtered.length, results: filtered });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-// ============================================
-// Server Launch Control (Skip if in test mode)
-// ============================================
+// ---------------- MONKEY ROUTES ----------------
+
+// POST /monkeys - Add new monkey
+app.post("/monkeys", authenticateToken, validateMonkey, async (req, res) => {
+  try {
+    const exists = await Monkey.findOne({ id: req.body.id });
+    if (exists) return res.status(409).json({ error: "Duplicate monkey ID" });
+
+    const monkey = new Monkey(req.body);
+    await monkey.save();
+    res.status(201).json({ message: "Monkey created", monkey });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// GET /monkeys - Retrieve monkeys with query filters
+app.get("/monkeys", authenticateToken, async (req, res) => {
+  try {
+    const query = {};
+    if (req.query.name) query.name = new RegExp(req.query.name, "i");
+    if (req.query.species) query.species = req.query.species;
+    if (req.query.reserved) query.reserved = req.query.reserved === "true";
+
+    const monkeys = await Monkey.find(query);
+    res.status(200).json({ count: monkeys.length, results: monkeys });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GET /monkeys/search?id=M123 - Search monkey by ID using binary search
+app.get("/monkeys/search", authenticateToken, async (req, res) => {
+  try {
+    const { id, name, species, reserved } = req.query;
+    const monkeys = await Monkey.find({});
+    const sorted = monkeys.sort((a, b) => a.id.localeCompare(b.id));
+
+    if (id) {
+      const found = binarySearch(sorted, id);
+      return found
+        ? res.status(200).json({ count: 1, results: [found] })
+        : res.status(404).json({ error: "Monkey not found" });
+    }
+
+    let filtered = sorted;
+    if (name) filtered = filtered.filter(m => m.name.toLowerCase().includes(name.toLowerCase()));
+    if (species) filtered = filtered.filter(m => m.species === species);
+    if (reserved) filtered = filtered.filter(m => m.reserved === (reserved === "true"));
+
+    res.status(200).json({ count: filtered.length, results: filtered });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ==================== Server Start (Skip if testing) ====================
 let serverInstance = null;
-
 if (process.env.NODE_ENV !== "test") {
   serverInstance = app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+    console.log(`Server listening on http://localhost:${PORT}`);
   });
 }
 
-// ============================================
-// Export app and instance for testing purposes
-// ============================================
 module.exports = { app, server: serverInstance };

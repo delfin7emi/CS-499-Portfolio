@@ -1,80 +1,98 @@
 // tests/dogSearch.test.js
 
-const request = require("supertest"); // For API testing
-const { app, server } = require("../server"); // Import Express app and server
-const jwt = require("jsonwebtoken"); // For generating a test token
+require("module-alias/register");
+
+jest.setTimeout(30000); // Allow time for DB operations
+
+const request = require("supertest");
+const { app, server } = require("../server");
+const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
+const mongoose = require("mongoose");
+const Dog = require("../models/Dogs"); // Direct path (avoids alias issues)
 
-//  Create a test JWT token (ensure your .env has JWT_SECRET or use fallback)
+// Generate a test JWT token
 const token = jwt.sign(
   { username: "testuser123" },
   process.env.JWT_SECRET || "secret123",
   { expiresIn: "1h" }
 );
 
-//  Read dog data from the local JSON file
+// Load a sample dog from the JSON file
 const dogsPath = path.join(__dirname, "../dogs.json");
 const dogs = JSON.parse(fs.readFileSync(dogsPath, "utf8"));
+const sampleDog = dogs.find(d => d.id); // Select first available dog with ID
 
-//  Select the first dog with an ID to ensure it works for binary search
-const sampleDog = dogs.find((dog) => dog.id);
+if (!sampleDog) {
+  throw new Error(" No sample dog found in dogs.json for testing.");
+}
 
-//  Shutdown server after all tests
-afterAll(() => {
-  if (server && server.close) {
-    server.close();
+// ==================== Setup / Teardown ==================== //
+
+beforeAll(async () => {
+  await mongoose.connect("mongodb://127.0.0.1:27017/grazioso_test", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  });
+});
+
+afterAll(async () => {
+  // Cleanup the inserted test dog (if created)
+  await Dog.deleteOne({ id: "D777" });
+
+  await mongoose.connection.close();
+
+  if (server && typeof server.close === "function") {
+    await new Promise(resolve => server.close(resolve));
   }
 });
 
-describe("Dog Search API /dogs/search", () => {
-  //  Binary Search test by ID
+// ==================== DOG SEARCH TESTS ==================== //
+
+describe("GET /dogs/search", () => {
   it("should find a dog by ID using binary search", async () => {
     const res = await request(app)
       .get(`/dogs/search?id=${sampleDog.id}`)
       .set("Authorization", `Bearer ${token}`);
 
-    expect(res.statusCode).toBe(200); // Expect HTTP 200
-    expect(res.body.results).toBeDefined(); // Ensure results array is returned
-    expect(res.body.results[0].id).toBe(sampleDog.id); // ID should match
+    expect(res.statusCode).toBe(200);
+    expect(Array.isArray(res.body.results)).toBe(true);
+    expect(res.body.results[0].id).toBe(sampleDog.id);
   });
 
-  //  ID not found should return 404
   it("should return 404 for non-existent ID", async () => {
     const res = await request(app)
       .get("/dogs/search?id=NOT_REAL_ID")
       .set("Authorization", `Bearer ${token}`);
 
-    expect(res.statusCode).toBe(404); // Expect not found
-    expect(res.body.error).toMatch(/not found/i); // Error message should mention "not found"
+    expect(res.statusCode).toBe(404);
+    expect(res.body.error).toMatch(/not found/i);
   });
 
-  //  Fallback search by partial name
   it("should fallback to filter by name", async () => {
-    const name = sampleDog.name?.substring(0, 3); // Use partial match for name
+    const partialName = sampleDog.name?.substring(0, 3) || "";
     const res = await request(app)
-      .get(`/dogs/search?name=${encodeURIComponent(name)}`)
-      .set("Authorization", `Bearer ${token}`);
-
-    expect(res.statusCode).toBe(200); // Expect success
-    expect(res.body.results.length).toBeGreaterThan(0); // Should return at least one result
-    expect(res.body.results[0].name.toLowerCase()).toContain(name.toLowerCase());
-  });
-
-  //  Fallback search by trainingStatus
-  it("should fallback to filter by trainingStatus", async () => {
-    const status = sampleDog.trainingStatus;
-    const res = await request(app)
-      .get(`/dogs/search?status=${encodeURIComponent(status)}`)
+      .get(`/dogs/search?name=${encodeURIComponent(partialName)}`)
       .set("Authorization", `Bearer ${token}`);
 
     expect(res.statusCode).toBe(200);
     expect(res.body.results.length).toBeGreaterThan(0);
-    expect(res.body.results[0].trainingStatus.toLowerCase()).toBe(status.toLowerCase());
+    expect(res.body.results[0].name.toLowerCase()).toContain(partialName.toLowerCase());
   });
 
-  //  Fallback search by reserved boolean
-  it("should fallback to filter by reserved flag", async () => {
+  it("should fallback to filter by trainingStatus", async () => {
+    const status = sampleDog.trainingStatus;
+    const res = await request(app)
+      .get(`/dogs/search?trainingStatus=${encodeURIComponent(status)}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.results.length).toBeGreaterThan(0);
+    expect(res.body.results[0].trainingStatus).toBe(status);
+  });
+
+  it("should fallback to filter by reserved status", async () => {
     const reserved = sampleDog.reserved;
     const res = await request(app)
       .get(`/dogs/search?reserved=${reserved}`)
@@ -85,19 +103,26 @@ describe("Dog Search API /dogs/search", () => {
     expect(res.body.results[0].reserved).toBe(reserved);
   });
 
-  //  Should reject unauthorized access
-  it("should reject access without JWT", async () => {
+  it("should reject access without JWT token", async () => {
     const res = await request(app).get("/dogs/search");
-    expect(res.statusCode).toBe(401); // Expect unauthorized
+
+    expect(res.statusCode).toBe(401);
     expect(res.body.message || res.body.error).toMatch(/unauthorized/i);
   });
 });
 
-describe("Dog POST API /dogs", () => {
-  //  Create new dog entry
-  it("should add a new dog entry", async () => {
+// ==================== DOG POST TESTS ==================== //
+
+describe("POST /dogs", () => {
+  const dogId = "D777";
+
+  afterAll(async () => {
+    await Dog.deleteOne({ id: dogId });
+  });
+
+  it("should successfully create a new dog", async () => {
     const newDog = {
-      id: "D777",
+      id: dogId,
       name: "Shadow",
       breed: "Husky",
       age: 4,
@@ -105,7 +130,7 @@ describe("Dog POST API /dogs", () => {
       weight: 60,
       acquisitionDate: "2025-06-14",
       acquisitionLocation: "Nevada",
-      trainingStatus: "in training",
+      trainingStatus: "In Training",
       reserved: false,
       inServiceCountry: "US"
     };
@@ -115,16 +140,17 @@ describe("Dog POST API /dogs", () => {
       .set("Authorization", `Bearer ${token}`)
       .send(newDog);
 
-    expect(res.statusCode).toBe(201); // Created
-    expect(res.body.message.toLowerCase()).toContain("dog saved");
-    expect(res.body.dog).toHaveProperty("id", "D777");
+    expect(res.statusCode).toBe(201);
+    expect(res.body.message).toMatch(/dog/i);
+    expect(res.body.dog).toHaveProperty("id", dogId);
   });
 
-  //  Unauthorized POST attempt
   it("should reject POST without token", async () => {
-    const res = await request(app).post("/dogs").send({ id: "D888" });
+    const res = await request(app)
+      .post("/dogs")
+      .send({ id: "D888", name: "NoAuthDog", breed: "Lab" });
 
-    expect(res.statusCode).toBe(401); // Unauthorized
+    expect(res.statusCode).toBe(401);
     expect(res.body.message || res.body.error).toMatch(/unauthorized/i);
   });
 });
