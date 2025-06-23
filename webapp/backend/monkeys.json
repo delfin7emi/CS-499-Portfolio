@@ -1,0 +1,68 @@
+[
+  {
+    "id": "M001",
+    "name": "Max",
+    "species": "Capuchin",
+    "reserved": false
+  },
+  {
+    "id": "M002",
+    "name": "Milo",
+    "species": "Howler",
+    "reserved": true
+  },
+  {
+    "id": "M003",
+    "name": "Maya",
+    "species": "Macaque",
+    "reserved": false
+  },
+  {
+    "id": "M777",
+    "name": "Zuri",
+    "species": "Squirrel Monkey",
+    "gender": "Female",
+    "age": 3,
+    "weight": 7,
+    "acquisitionDate": "2025-06-14",
+    "acquisitionLocation": "Florida",
+    "reserved": false,
+    "inServiceCountry": "US"
+  },
+  {
+    "id": "M777",
+    "name": "Zuri",
+    "species": "Squirrel Monkey",
+    "gender": "Female",
+    "age": 3,
+    "weight": 7,
+    "acquisitionDate": "2025-06-14",
+    "acquisitionLocation": "Florida",
+    "reserved": false,
+    "inServiceCountry": "US"
+  },
+  {
+    "id": "M777",
+    "name": "Zuri",
+    "species": "Squirrel Monkey",
+    "gender": "Female",
+    "age": 3,
+    "weight": 7,
+    "acquisitionDate": "2025-06-14",
+    "acquisitionLocation": "Florida",
+    "reserved": false,
+    "inServiceCountry": "US"
+  },
+  {
+    "id": "M777",
+    "name": "Zuri",
+    "species": "Squirrel Monkey",
+    "gender": "Female",
+    "age": 3,
+    "weight": 7,
+    "acquisitionDate": "2025-06-14",
+    "acquisitionLocation": "Florida",
+    "reserved": false,
+    "inServiceCountry": "US"
+  }
+]

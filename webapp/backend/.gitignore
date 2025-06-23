@@ -1,0 +1,15 @@
+# Dependency folders
+node_modules/
+
+# Test coverage output
+coverage/
+
+# Environment files
+.env
+.env.development
+.env.production
+process.env
+
+# System files
+.DS_Store
+Thumbs.db

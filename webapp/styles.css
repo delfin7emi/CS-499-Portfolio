@@ -1,0 +1,78 @@
+/* Global reset and base styling */
+body {
+    font-family: "Segoe UI", sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  /* Page title */
+  h1 {
+    text-align: center;
+    color: #004d4d;
+    margin-bottom: 30px;
+  }
+  
+  /* Menu button layout */
+  #menu {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Buttons styling */
+  button {
+    background-color: #007b7f;
+    border: none;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #005b5f;
+  }
+  
+  /* Form container and output layout */
+  #form-container, #output {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* Form inputs */
+  input, select {
+    width: 100%;
+    padding: 8px;
+    margin: 8px 0 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Responsive tweaks */
+  @media screen and (max-width: 600px) {
+    #menu {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    button {
+      width: 80%;
+    }
+  
+    #form-container, #output {
+      padding: 15px;
+    }
+  }
+  

@@ -1,0 +1,43 @@
+<!-- index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rescue Animal System</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <h1>Welcome to Grazioso Rescue</h1>
+
+  <!-- Menu Section -->
+  <div id="menu">
+    <button onclick="showForm('dog')">Intake a new Dog</button>
+    <button onclick="showForm('monkey')">Intake a new Monkey</button>
+    <button onclick="reserveAnimal()">Reserve an Animal</button>
+    <button onclick="printAnimals('dog')">Print All Dogs</button>
+    <button onclick="printAnimals('monkey')">Print All Monkeys</button>
+    <button onclick="printAnimals('available')">Print Unreserved Animals</button>
+    <button onclick="searchAnimal()">Search Animal</button>
+    
+    <!-- Export Button -->
+    <button onclick="exportData()">Export All Animal Data</button>
+  </div>
+
+    <!-- Import Button + Hidden File Input -->
+    <label for="importFile" class="import-label">Import Animal Data</label>
+    <input type="file" id="importFile" accept=".json" onchange="importData(event)">
+ 
+    <!-- Clear All Data Button-->
+    <button class="btn btn-danger mt-2" onclick="clearAllData()">Clear All Animal Data</button>
+
+
+  <!-- Output and Forms -->
+  <div id="output"></div>
+  <div id="form-container"></div>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+</body>
+</html>
