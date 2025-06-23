@@ -1,8 +1,8 @@
 // Import the binarySearch function from your utils directory
 const binarySearch = require("../utils/binarySearch");
 
-describe("binarySearch", () => {
-  // Sample animal data used in tests — MUST be sorted by `id`
+describe("binarySearch()", () => {
+  // Sample animal data (must be sorted by 'id' for binary search to work correctly)
   const sampleAnimals = [
     { id: "A001", name: "Buddy" },
     { id: "A002", name: "Charlie" },
@@ -11,38 +11,32 @@ describe("binarySearch", () => {
     { id: "A005", name: "Bella" },
   ];
 
-  //  Test middle element
-  test("should return the correct object when ID exists in the middle", () => {
+  test("returns correct object when ID is in the middle", () => {
     const result = binarySearch(sampleAnimals, "A003");
     expect(result).toEqual({ id: "A003", name: "Max" });
   });
 
-  //  Test first element
-  test("should return the correct object when ID exists at the beginning", () => {
+  test("returns correct object when ID is the first element", () => {
     const result = binarySearch(sampleAnimals, "A001");
     expect(result).toEqual({ id: "A001", name: "Buddy" });
   });
 
-  //  Test last element
-  test("should return the correct object when ID exists at the end", () => {
+  test("returns correct object when ID is the last element", () => {
     const result = binarySearch(sampleAnimals, "A005");
     expect(result).toEqual({ id: "A005", name: "Bella" });
   });
 
-  //  Test non-existent ID
-  test("should return null when ID does not exist", () => {
+  test("returns null when ID does not exist", () => {
     const result = binarySearch(sampleAnimals, "Z999");
     expect(result).toBeNull();
   });
 
-  //  Test with empty array
-  test("should return null for empty array", () => {
+  test("returns null when input array is empty", () => {
     const result = binarySearch([], "A001");
     expect(result).toBeNull();
   });
 
-  //  Test numeric-looking string IDs
-  test("should handle numeric-like string IDs", () => {
+  test("works with numeric-looking string IDs", () => {
     const numericData = [
       { id: "100" },
       { id: "200" },
@@ -50,5 +44,27 @@ describe("binarySearch", () => {
     ];
     const result = binarySearch(numericData, "200");
     expect(result).toEqual({ id: "200" });
+  });
+
+  test("is case-insensitive with mixed casing", () => {
+    const result = binarySearch(sampleAnimals, "a003");
+    expect(result).toEqual({ id: "A003", name: "Max" });
+  });
+
+  test("returns null for non-string targetId", () => {
+    const result = binarySearch(sampleAnimals, 300); // invalid type
+    expect(result).toBeNull();
+  });
+
+  test("skips invalid entries safely", () => {
+    const corruptedData = [
+      { id: "A001" },
+      null,
+      { id: null },
+      { id: "A002" }
+    ];
+    const sorted = corruptedData.filter(e => e?.id).sort((a, b) => a.id.localeCompare(b.id));
+    const result = binarySearch(sorted, "A002");
+    expect(result).toEqual({ id: "A002" });
   });
 });
