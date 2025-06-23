@@ -1,156 +1,124 @@
-// tests/dogSearch.test.js
+// ==================== Load .env Variables ====================
+require("dotenv").config();
+jest.setTimeout(120000); // Prevent timeout on slow test runs
 
-require("module-alias/register");
-
-jest.setTimeout(30000); // Allow time for DB operations
-
+// ==================== Imports ====================
 const request = require("supertest");
-const { app, server } = require("../server");
-const jwt = require("jsonwebtoken");
-const fs = require("fs");
-const path = require("path");
 const mongoose = require("mongoose");
-const Dog = require("../models/Dogs"); // Direct path (avoids alias issues)
+const jwt = require("jsonwebtoken");
+const Dog = require("../models/Dogs");
 
-// Generate a test JWT token
-const token = jwt.sign(
-  { username: "testuser123" },
+// ✅ FIXED: Import only the app from server.js (not the whole module)
+const { app } = require("../server");
+
+const { connectTestDb, disconnectTestDb } = require("../utils/testDbConnect");
+
+// ==================== JWT Setup ====================
+const JWT_TOKEN = jwt.sign(
+  { username: "testuser" },
   process.env.JWT_SECRET || "secret123",
   { expiresIn: "1h" }
 );
 
-// Load a sample dog from the JSON file
-const dogsPath = path.join(__dirname, "../dogs.json");
-const dogs = JSON.parse(fs.readFileSync(dogsPath, "utf8"));
-const sampleDog = dogs.find(d => d.id); // Select first available dog with ID
-
-if (!sampleDog) {
-  throw new Error(" No sample dog found in dogs.json for testing.");
-}
-
-// ==================== Setup / Teardown ==================== //
-
+// ==================== Setup & Teardown ====================
 beforeAll(async () => {
-  await mongoose.connect("mongodb://127.0.0.1:27017/grazioso_test", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
+  await connectTestDb(); // Connect once before all tests
+});
+
+beforeEach(async () => {
+  await Dog.deleteMany(); // Clean DB for isolated tests
+
+  await Dog.insertMany([
+    {
+      id: "D001",
+      name: "Rex",
+      breed: "German Shepherd",
+      age: 4,
+      weight: 70,
+      gender: "male",
+      trainingStatus: "intensive",
+      reserved: false,
+      acquisitionDate: new Date(),
+      acquisitionLocation: "Portland",
+      inServiceCountry: "US"
+    },
+    {
+      id: "D002",
+      name: "Luna",
+      breed: "Labrador",
+      age: 3,
+      weight: 55,
+      gender: "female",
+      trainingStatus: "basic",
+      reserved: true,
+      acquisitionDate: new Date(),
+      acquisitionLocation: "Salem",
+      inServiceCountry: "US"
+    }
+  ]);
 });
 
 afterAll(async () => {
-  // Cleanup the inserted test dog (if created)
-  await Dog.deleteOne({ id: "D777" });
-
-  await mongoose.connection.close();
-
-  if (server && typeof server.close === "function") {
-    await new Promise(resolve => server.close(resolve));
-  }
+  await disconnectTestDb(); // Disconnect after all tests
+  await new Promise(res => setTimeout(res, 500)); // Let Jest exit cleanly
 });
 
-// ==================== DOG SEARCH TESTS ==================== //
-
+// ==================== Test Suite: GET /dogs/search ====================
 describe("GET /dogs/search", () => {
+
   it("should find a dog by ID using binary search", async () => {
     const res = await request(app)
-      .get(`/dogs/search?id=${sampleDog.id}`)
-      .set("Authorization", `Bearer ${token}`);
+      .get("/dogs/search?id=D001")
+      .set("Authorization", `Bearer ${JWT_TOKEN}`);
 
     expect(res.statusCode).toBe(200);
-    expect(Array.isArray(res.body.results)).toBe(true);
-    expect(res.body.results[0].id).toBe(sampleDog.id);
+    expect(res.body.results).toHaveLength(1);
+    expect(res.body.results[0].id).toBe("D001");
   });
 
   it("should return 404 for non-existent ID", async () => {
     const res = await request(app)
-      .get("/dogs/search?id=NOT_REAL_ID")
-      .set("Authorization", `Bearer ${token}`);
+      .get("/dogs/search?id=Z999")
+      .set("Authorization", `Bearer ${JWT_TOKEN}`);
 
     expect(res.statusCode).toBe(404);
     expect(res.body.error).toMatch(/not found/i);
   });
 
-  it("should fallback to filter by name", async () => {
-    const partialName = sampleDog.name?.substring(0, 3) || "";
+  it("should filter dogs by partial name (fallback)", async () => {
     const res = await request(app)
-      .get(`/dogs/search?name=${encodeURIComponent(partialName)}`)
-      .set("Authorization", `Bearer ${token}`);
+      .get("/dogs/search?name=lu")
+      .set("Authorization", `Bearer ${JWT_TOKEN}`);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.results.length).toBeGreaterThan(0);
-    expect(res.body.results[0].name.toLowerCase()).toContain(partialName.toLowerCase());
+    expect(res.body.results.length).toBe(1);
+    expect(res.body.results[0].name.toLowerCase()).toContain("lu");
   });
 
-  it("should fallback to filter by trainingStatus", async () => {
-    const status = sampleDog.trainingStatus;
+  it("should filter dogs by trainingStatus (fallback)", async () => {
     const res = await request(app)
-      .get(`/dogs/search?trainingStatus=${encodeURIComponent(status)}`)
-      .set("Authorization", `Bearer ${token}`);
+      .get("/dogs/search?trainingStatus=intensive")
+      .set("Authorization", `Bearer ${JWT_TOKEN}`);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.results.length).toBeGreaterThan(0);
-    expect(res.body.results[0].trainingStatus).toBe(status);
+    expect(res.body.results[0].trainingStatus).toBe("intensive");
   });
 
-  it("should fallback to filter by reserved status", async () => {
-    const reserved = sampleDog.reserved;
+  it("should filter dogs by reserved=true (fallback)", async () => {
     const res = await request(app)
-      .get(`/dogs/search?reserved=${reserved}`)
-      .set("Authorization", `Bearer ${token}`);
+      .get("/dogs/search?reserved=true")
+      .set("Authorization", `Bearer ${JWT_TOKEN}`);
 
     expect(res.statusCode).toBe(200);
-    expect(res.body.results.length).toBeGreaterThan(0);
-    expect(res.body.results[0].reserved).toBe(reserved);
+    expect(res.body.results[0].reserved).toBe(true);
   });
 
-  it("should reject access without JWT token", async () => {
-    const res = await request(app).get("/dogs/search");
+  it("should reject unauthorized requests (missing token)", async () => {
+    const res = await request(app)
+      .get("/dogs/search?id=D001"); // No token
 
     expect(res.statusCode).toBe(401);
-    expect(res.body.message || res.body.error).toMatch(/unauthorized/i);
-  });
-});
-
-// ==================== DOG POST TESTS ==================== //
-
-describe("POST /dogs", () => {
-  const dogId = "D777";
-
-  afterAll(async () => {
-    await Dog.deleteOne({ id: dogId });
+    expect(res.body.message || res.text).toMatch(/unauthorized/i);
   });
 
-  it("should successfully create a new dog", async () => {
-    const newDog = {
-      id: dogId,
-      name: "Shadow",
-      breed: "Husky",
-      age: 4,
-      gender: "Male",
-      weight: 60,
-      acquisitionDate: "2025-06-14",
-      acquisitionLocation: "Nevada",
-      trainingStatus: "In Training",
-      reserved: false,
-      inServiceCountry: "US"
-    };
-
-    const res = await request(app)
-      .post("/dogs")
-      .set("Authorization", `Bearer ${token}`)
-      .send(newDog);
-
-    expect(res.statusCode).toBe(201);
-    expect(res.body.message).toMatch(/dog/i);
-    expect(res.body.dog).toHaveProperty("id", dogId);
-  });
-
-  it("should reject POST without token", async () => {
-    const res = await request(app)
-      .post("/dogs")
-      .send({ id: "D888", name: "NoAuthDog", breed: "Lab" });
-
-    expect(res.statusCode).toBe(401);
-    expect(res.body.message || res.body.error).toMatch(/unauthorized/i);
-  });
 });

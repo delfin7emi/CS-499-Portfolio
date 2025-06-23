@@ -1,27 +1,32 @@
 /**
  * Performs binary search on a sorted array of objects based on their 'id' field.
- * This search is case-insensitive and assumes the array is already sorted.
+ * This version is case-insensitive, safe for missing fields, and avoids crashes.
  *
- * @param {Array} arr - Array of objects (e.g., dogs or monkeys) sorted by 'id'
- * @param {string} targetId - ID to search for (e.g., "D001", "M999")
- * @returns {Object|null} - The matching object or null if not found
+ * @param {Array<Object>} arr - Array of objects sorted by 'id'
+ * @param {string} targetId - ID to search for
+ * @returns {Object|null} - The found object or null
  */
 function binarySearch(arr, targetId) {
-  if (!Array.isArray(arr) || !targetId) return null;
+  if (!Array.isArray(arr) || typeof targetId !== 'string') {
+    console.warn("Invalid input to binarySearch");
+    return null;
+  }
 
-  // Normalize the target ID for case-insensitive comparison
-  const normalizedTarget = targetId.toLowerCase();
+  const normalizedTarget = targetId.trim().toLowerCase();
   let left = 0;
   let right = arr.length - 1;
 
   while (left <= right) {
     const mid = Math.floor((left + right) / 2);
-    const currentId = arr[mid].id?.toLowerCase();
 
-    if (!currentId) {
-      // Skip invalid entries with missing ID
-      return null;
+    // Ensure the object at mid has an 'id'
+    if (!arr[mid] || typeof arr[mid].id !== 'string') {
+      console.warn(`Skipping invalid entry at index ${mid}`);
+      left++; // Skip and move on
+      continue;
     }
+
+    const currentId = arr[mid].id.trim().toLowerCase();
 
     if (currentId === normalizedTarget) {
       return arr[mid];

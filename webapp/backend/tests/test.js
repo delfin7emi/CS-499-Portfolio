@@ -1,11 +1,22 @@
-// Load alias resolver and .env first
-require("module-alias/register");
+// Load environment variables
 require("dotenv").config();
 
-//  Manually include all test files
-require("@authController.test");
-require("@binarySearch.test");
-require("@dogPost.test");
-require("@dogSearch.test");
-require("@monkeyPost.test");
-require("@monkeySearch.test");
+// ==================== LOAD INDIVIDUAL TEST FILES WITH LOGGING ====================
+
+console.log("\n🔐 Running authController tests...");
+require("./authController.test");
+
+console.log("\n📈 Running binarySearch tests...");
+require("./binarySearch.test");
+
+console.log("\n🐶 Running dogPost tests...");
+require("./dogPost.test");
+
+console.log("\n🔍 Running dogSearch tests...");
+require("./dogSearch.test");
+
+console.log("\n🐒 Running monkeyPost tests...");
+require("./monkeyPost.test");
+
+console.log("\n🔍 Running monkeySearch tests...");
+require("./monkeySearch.test");

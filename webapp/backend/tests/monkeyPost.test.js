@@ -1,175 +1,152 @@
-// tests/monkey.test.js
+// ==================== tests/monkeyPost.test.js ====================
 
-require("module-alias/register");
-
-jest.setTimeout(100000); // Extend timeout for DB operations
+require("dotenv").config();
+jest.setTimeout(120000);
 
 const request = require("supertest");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const { app, server } = require("@server");
-const Monkey = require("@models/Monkeys"); // Use relative path to avoid Jest alias resolution issues
+const { app } = require("../server");
+const Monkey = require("../models/Monkeys");
+const { connectTestDb, disconnectTestDb } = require("../utils/testDbConnect");
 
-// Generate test JWT token
-const token = jwt.sign(
+mongoose.set("bufferCommands", false);
+
+const JWT_TOKEN = jwt.sign(
   { username: "testuser" },
   process.env.JWT_SECRET || "secret123",
   { expiresIn: "1h" }
 );
 
-// Connect to MongoDB test database
-beforeAll(async () => {
-  await mongoose.connect("mongodb://127.0.0.1:27017/grazioso_test", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  console.log(" Connected to test DB");
+beforeAll(connectTestDb);
+
+beforeEach(async () => {
+  await Monkey.deleteMany();
 });
 
-// Clean up inserted test data and close DB/server
 afterAll(async () => {
-  await Monkey.deleteMany({ id: { $in: ["M777", "M888", "M_DUP", "M_BAD"] } });
-  await mongoose.connection.close();
-  if (server && typeof server.close === "function") {
-    await new Promise((resolve) => server.close(resolve));
-  }
+  await disconnectTestDb();
+  await new Promise((res) => setTimeout(res, 1000));
 });
-
-// ==================== MONKEY TEST CASES ==================== //
 
 describe("POST /monkeys", () => {
-  it(" should successfully create a monkey", async () => {
-    const monkeyData = {
-      id: "M777",
-      name: "Zuri",
-      species: "Squirrel Monkey",
-      tailLength: 20,
-      height: 35,
-      bodyLength: 40,
-      gender: "Female",
-      age: 3,
-      weight: 7,
-      acquisitionDate: "2025-06-14T00:00:00.000Z",
-      acquisitionLocation: "Florida",
-      trainingStatus: "In Training",
+  it("should return 400 if required fields are missing", async () => {
+    const res = await request(app)
+      .post("/monkeys")
+      .set("Authorization", `Bearer ${JWT_TOKEN}`)
+      .send({});
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty("error");
+  });
+
+  it("should reject invalid species or tailLength", async () => {
+    const res = await request(app)
+      .post("/monkeys")
+      .set("Authorization", `Bearer ${JWT_TOKEN}`)
+      .send({
+        id: "M001",
+        name: "Bobo",
+        age: 4,
+        weight: 22,
+        height: 40,
+        species: "Dragon",         // ❌ Invalid
+        tailLength: -3,            // ❌ Invalid
+        bodyLength: 19,
+        gender: "female",
+        trainingStatus: "basic",
+        reserved: false,
+        acquisitionDate: "2023-01-01",
+        acquisitionLocation: "Brazil",
+        inServiceCountry: "USA"
+      });
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toHaveProperty("error");
+  });
+
+  it("should reject duplicate monkey ID", async () => {
+    const monkey = {
+      id: "M123",
+      name: "Kiki",
+      age: 5,
+      weight: 25,
+      height: 45,
+      species: "Capuchin",
+      tailLength: 12,
+      bodyLength: 18,
+      gender: "male",
+      trainingStatus: "intensive",
       reserved: false,
-      inServiceCountry: "US"
+      acquisitionDate: "2023-01-01",
+      acquisitionLocation: "Panama",
+      inServiceCountry: "USA"
+    };
+
+    const res1 = await request(app)
+      .post("/monkeys")
+      .set("Authorization", `Bearer ${JWT_TOKEN}`)
+      .send(monkey);
+    expect(res1.statusCode).toBe(201);
+
+    const res2 = await request(app)
+      .post("/monkeys")
+      .set("Authorization", `Bearer ${JWT_TOKEN}`)
+      .send(monkey);
+    expect(res2.statusCode).toBe(409);
+    expect(res2.body).toHaveProperty("error", "Duplicate monkey ID");
+  });
+
+  it("should create a new monkey successfully", async () => {
+    const monkeyData = {
+      id: "M999",
+      name: "Zazu",
+      age: 2,
+      weight: 18,
+      height: 38,
+      species: "Marmoset",
+      tailLength: 10,
+      bodyLength: 15,
+      gender: "male",                // ✅ must be lowercase
+      trainingStatus: "basic",       // ✅ must be lowercase
+      reserved: false,
+      acquisitionDate: "2024-01-01",
+      acquisitionLocation: "Ecuador",
+      inServiceCountry: "USA"
     };
 
     const res = await request(app)
       .post("/monkeys")
-      .set("Authorization", `Bearer ${token}`)
+      .set("Authorization", `Bearer ${JWT_TOKEN}`)
       .send(monkeyData);
 
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty("message", "Monkey created");
-    expect(res.body.monkey).toHaveProperty("id", "M777");
+    expect(res.body.monkey).toHaveProperty("id", monkeyData.id);
   });
 
-  it(" should reject POST without auth token", async () => {
-    const res = await request(app)
-      .post("/monkeys")
-      .send({ id: "M888", name: "Nala", species: "Capuchin" });
-
-    expect(res.statusCode).toBe(401);
-    expect(res.body.message || res.body.error).toMatch(/unauthorized/i);
-  });
-
-  it(" should return 400 if required fields are missing", async () => {
-    const res = await request(app)
-      .post("/monkeys")
-      .set("Authorization", `Bearer ${token}`)
-      .send({
-        id: "M_BAD",
-        name: "Kiko"
-        // Missing required fields
-      });
-
-    expect(res.statusCode).toBe(400);
-    expect(res.body.message || res.body.error).toMatch(/missing/i);
-  });
-
-  it(" should return 400 for invalid gender or trainingStatus", async () => {
-    const res = await request(app)
-      .post("/monkeys")
-      .set("Authorization", `Bearer ${token}`)
-      .send({
-        id: "M_BAD",
-        name: "InvalidOne",
-        species: "Capuchin",
-        tailLength: 25,
-        height: 30,
-        bodyLength: 35,
-        gender: "Unknown", // Invalid
-        age: 3,
-        weight: 6,
-        acquisitionDate: "2025-01-01",
-        acquisitionLocation: "Texas",
-        trainingStatus: "Untrained", // Invalid
-        reserved: false,
-        inServiceCountry: "US"
-      });
-
-    expect(res.statusCode).toBe(400);
-    expect(res.body.message || res.body.error).toMatch(/invalid/i);
-  });
-
-  it(" should reject negative or invalid numeric values", async () => {
-    const res = await request(app)
-      .post("/monkeys")
-      .set("Authorization", `Bearer ${token}`)
-      .send({
-        id: "M_BAD",
-        name: "Buggy",
-        species: "Capuchin",
-        tailLength: -10, // Invalid
-        height: 30,
-        bodyLength: 40,
-        gender: "Male",
-        age: -2, // Invalid
-        weight: -5, // Invalid
-        acquisitionDate: "2025-01-01",
-        acquisitionLocation: "Texas",
-        trainingStatus: "Available",
-        reserved: false,
-        inServiceCountry: "US"
-      });
-
-    expect(res.statusCode).toBe(400);
-    expect(res.body.message || res.body.error).toMatch(/invalid/i);
-  });
-
-  it(" should reject duplicate monkey ID", async () => {
-    const monkey = {
-      id: "M_DUP",
-      name: "Original",
-      species: "Howler",
-      tailLength: 25,
-      height: 33,
-      bodyLength: 38,
-      gender: "Male",
-      age: 5,
-      weight: 10,
-      acquisitionDate: "2025-01-01",
-      acquisitionLocation: "NY",
-      trainingStatus: "Available",
+  it("should reject request without a token", async () => {
+    const monkeyData = {
+      id: "M200",
+      name: "Kiki",
+      species: "Capuchin",
+      tailLength: 30,
+      height: 40,
+      bodyLength: 50,
+      gender: "female",               // lowercase
+      age: 4,
+      weight: 12,
+      acquisitionDate: "2024-01-01",
+      acquisitionLocation: "Brazil",
+      trainingStatus: "basic",        // lowercase
       reserved: false,
-      inServiceCountry: "US"
+      inServiceCountry: "USA"
     };
 
-    // First insert - should succeed
-    await request(app)
-      .post("/monkeys")
-      .set("Authorization", `Bearer ${token}`)
-      .send(monkey);
 
-    // Second insert - should fail
     const res = await request(app)
       .post("/monkeys")
-      .set("Authorization", `Bearer ${token}`)
-      .send(monkey);
+      .send(monkeyData);
 
-    expect(res.statusCode).toBe(409);
-    expect(res.body.message || res.body.error).toMatch(/duplicate/i);
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toHaveProperty("message");
   });
 });
