@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Emireth Castro – CS 499 ePortfolio</title>
   <style>
     body {
@@ -70,14 +70,6 @@
       color: #3a7ca5;
       margin-top: 20px;
     }
-    .narrative {
-      background-color: #f0f9fc;
-      border-left: 4px solid #a3c5d9;
-      padding: 15px;
-      margin: 10px 30px 30px 0;
-      font-size: 1em;
-      line-height: 1.6;
-    }
     ul {
       line-height: 1.8;
     }
@@ -87,13 +79,6 @@
     }
     a:hover {
       text-decoration: underline;
-    }
-    footer {
-      margin-top: 60px;
-      font-size: 0.9em;
-      text-align: center;
-      color: #555;
-      padding: 20px;
     }
     .icon {
       width: 20px;
@@ -110,6 +95,27 @@
       border: none;
       border-radius: 10px;
     }
+    .narrative-buttons a.button {
+      display: inline-block;
+      background-color: #467599;
+      color: white;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .narrative-buttons a.button:hover {
+      background-color: #365b76;
+    }
+    footer {
+      margin-top: 60px;
+      font-size: 0.9em;
+      text-align: center;
+      color: #555;
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
@@ -117,6 +123,7 @@
     <h1>🌍 Emireth Castro's CS 499 ePortfolio</h1>
     <p>A showcase of software design, algorithmic thinking, and data engineering</p>
   </header>
+
   <div class="nav-buttons">
     <a href="#about" class="nav-btn">About</a>
     <a href="#code-review" class="nav-btn">Code Review</a>
@@ -124,11 +131,13 @@
     <a href="#enhancements" class="nav-btn">Enhancements</a>
     <a href="#narratives" class="nav-btn">Narratives</a>
   </div>
+
   <main>
     <section id="about">
       <h2>📘 About</h2>
       <p>This portfolio showcases the original and enhanced software artifacts developed throughout my Computer Science program at SNHU. Each section maps to key course outcomes including software design, data structures, and secure engineering practices.</p>
     </section>
+
     <section id="code-review">
       <h2>🧪 Code Review</h2>
       <p>This screencast walks through code enhancements with attention to readability, modularity, and secure coding guidelines.</p>
@@ -137,6 +146,7 @@
         <iframe src="https://www.youtube.com/embed/X_CrW1wisrI" allowfullscreen title="Code Review Video"></iframe>
       </div>
     </section>
+
     <section id="original-artifacts">
       <h2>🔧 Original Artifacts</h2>
       <p>For the CS-499 Capstone project, students are asked to select one or more artifacts in the following categories:</p>
@@ -152,6 +162,7 @@
         <li><strong>Databases:</strong> The Grazioso Salvare Pet Project from IT-145 extended with MongoDB and Mongoose.</li>
       </ul>
     </section>
+
     <section id="enhancements">
       <h2>🚀 Enhancements</h2>
       <h3>Software Engineering and Design</h3>
@@ -166,14 +177,16 @@
       <p>I implemented MongoDB and Mongoose to replace static data. CRUD operations and schema validation were added to manage dog and monkey data effectively.</p>
       <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/database-enhancement" target="_blank">Click here</a> to view the Databases repository for this enhancement.</p>
     </section>
+
     <section id="narratives">
       <h2>📄 Narratives</h2>
-      <ul>
-        <li><a href="Software_Design_Narrative.pdf" download>Software Design & Engineering Narrative (PDF) ⬇️</a></li>
-        <li><a href="Algorithms_Narrative.pdf" download>Algorithms & Data Structures Narrative (PDF) ⬇️</a></li>
-        <li><a href="Databases_Narrative.pdf" download>Databases Narrative (PDF) ⬇️</a></li>
-      </ul>
+      <div class="narrative-buttons">
+        <a class="button" href="software-design-enhancement.pdf" target="_blank">📄 Software Design & Engineering PDF</a>
+        <a class="button" href="Algorithms_Narrative.pdf" target="_blank">📄 Algorithms & Data Structures PDF</a>
+        <a class="button" href="Databases_Narrative.pdf" target="_blank">📄 Databases PDF</a>
+      </div>
     </section>
+
     <section id="links">
       <h2>🔗 Links</h2>
       <ul>
@@ -182,6 +195,7 @@
       </ul>
     </section>
   </main>
+
   <footer>
     © 2025 Emireth Castro | CS 499 Capstone Portfolio | Southern New Hampshire University
   </footer>
