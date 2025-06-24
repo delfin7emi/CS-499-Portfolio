@@ -2,17 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Emireth Castro - CS 499 ePortfolio</title>
-  <link rel="stylesheet" href="styles.css" />
-  <div class="nav-buttons">
-    <a href="#about" class="nav-btn">About</a>
-    <a href="#code-review" class="nav-btn">Code Review</a>
-    <a href="#original-artifacts" class="nav-btn">Original Artifacts</a>
-    <a href="#enhancements" class="nav-btn">Enhancements</a>
-    <a href="#narratives" class="nav-btn">Narratives</a>
-  </div>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Emireth Castro – CS 499 ePortfolio</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -21,16 +12,28 @@
       color: #222;
     }
 
+    h1, h2 {
+      color: #004080;
+    }
+
     h1 {
       text-align: center;
-      color: #004080;
+      margin-bottom: 10px;
     }
 
     h2 {
       border-bottom: 2px solid #ccc;
       padding-bottom: 6px;
-      margin-top: 40px;
-      color: #003366;
+      margin-top: 50px;
+    }
+
+    .narrative {
+      background-color: #f9f9f9;
+      border-left: 4px solid #ccc;
+      padding: 15px;
+      margin: 10px 30px 30px 0;
+      font-size: 1em;
+      line-height: 1.6;
     }
 
     ul {
@@ -46,12 +49,27 @@
       text-decoration: underline;
     }
 
-    .narrative {
-      background-color: #f9f9f9;
-      border-left: 4px solid #cccccc;
-      padding: 15px;
-      margin: 10px 0 30px 0;
-      font-size: 0.95em;
+    .nav-buttons {
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 40px;
+    }
+
+    .nav-btn {
+      display: inline-block;
+      margin: 0 10px;
+      padding: 10px 20px;
+      background-color: #673ab7;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: #512da8;
     }
 
     footer {
@@ -64,42 +82,60 @@
 </head>
 <body>
 
-  <h1>Welcome to My CS 499 ePortfolio</h1>
+  <h1 id="about">Welcome to My CS 499 ePortfolio</h1>
+
+  <div class="nav-buttons">
+    <a href="#about" class="nav-btn">About</a>
+    <a href="#code-review" class="nav-btn">Code Review</a>
+    <a href="#original-artifacts" class="nav-btn">Original Artifacts</a>
+    <a href="#enhancements" class="nav-btn">Enhancements</a>
+    <a href="#narratives" class="nav-btn">Narratives</a>
+  </div>
+
   <p>This site showcases the original and enhanced artifacts I developed throughout the SNHU Computer Science program, aligned with the five course outcomes. Each enhancement demonstrates applied skills, improvements, and reflective practice in software design, algorithms, and databases.</p>
 
-  <!-- Enhancement 1: Software Design & Engineering -->
-  <h2>🔧 Software Design & Engineering</h2>
+  <h2 id="original-artifacts">🔧 Software Design & Engineering</h2>
   <ul>
-    <li><strong>Original Artifact:</strong> <a href="Dog.java" target="_blank">Dog.java</a>, <a href="Driver.java" target="_blank">Driver.java</a></li>
-    <li><strong>Enhanced Artifact:</strong> <a href="webapp/backend/server.js" target="_blank">server.js</a>, <a href="webapp/backend/models/Dogs.js" target="_blank">Dogs.js (Mongoose Model)</a></li>
+    <li><strong>Original Artifact:</strong> <a href="Dog.java">Dog.java</a>, <a href="Driver.java">Driver.java</a></li>
+    <li><strong>Enhanced Artifact:</strong> <a href="server.js">server.js</a>, <a href="Dogs.js">Dogs.js (Mongoose Model)</a></li>
   </ul>
   <div class="narrative">
-    For this enhancement, I transitioned my original Java-based rescue animal system into a full-stack web application using Node.js and Express. I implemented a modular architecture with separate model, route, and middleware layers, applying RESTful design and following best practices in maintainability. The improvement focuses on clarity, scalability, and reusability of components, reflecting real-world backend service design. This allowed me to demonstrate my skills in clean architecture and development using JavaScript and Express.js.
+    For this enhancement, I transitioned my original Java-based rescue animal system into a full-stack web application using Node.js and Express...
   </div>
 
-  <!-- Enhancement 2: Algorithms & Data Structures -->
-  <h2>🧠 Algorithms & Data Structures</h2>
+  <h2 id="enhancements">🧠 Algorithms & Data Structures</h2>
   <ul>
-    <li><strong>Original Artifact:</strong> <a href="RescueAnimal.java" target="_blank">RescueAnimal.java</a>, <a href="Monkey.java" target="_blank">Monkey.java</a></li>
-    <li><strong>Enhanced Artifact:</strong> <a href="webapp/backend/utils/binarySearch.js" target="_blank">binarySearch.js</a>, <a href="webapp/backend/tests/binarySearch.test.js" target="_blank">binarySearch.test.js</a></li>
+    <li><strong>Original Artifact:</strong> <a href="RescueAnimal.java">RescueAnimal.java</a>, <a href="Monkey.java">Monkey.java</a></li>
+    <li><strong>Enhanced Artifact:</strong> <a href="binarySearch.js">binarySearch.js</a>, <a href="binarySearch.test.js">binarySearch.test.js</a></li>
   </ul>
   <div class="narrative">
-    The goal of this enhancement was to demonstrate algorithm optimization by replacing linear search with a binary search implementation. I created a utility function for efficient lookups by ID and integrated it into both monkey and dog search routes. The enhancement also included unit tests to validate correctness. This shows how I applied algorithmic principles to improve performance and reduce time complexity from O(n) to O(log n), demonstrating real-world problem solving in data handling.
+    The goal of this enhancement was to demonstrate algorithm optimization by replacing linear search with a binary search implementation...
   </div>
 
-  <!-- Enhancement 3: Databases -->
   <h2>💾 Databases</h2>
   <ul>
-    <li><strong>Original Artifact:</strong> <a href="Monkey.java" target="_blank">Monkey.java</a>, <a href="Driver.java" target="_blank">Driver.java</a></li>
-    <li><strong>Enhanced Artifact:</strong> <a href="webapp/backend/models/Monkeys.js" target="_blank">Monkeys.js</a>, <a href="webapp/backend/data/monkeys.json" target="_blank">monkeys.json</a></li>
+    <li><strong>Original Artifact:</strong> <a href="Monkey.java">Monkey.java</a>, <a href="Driver.java">Driver.java</a></li>
+    <li><strong>Enhanced Artifact:</strong> <a href="Monkeys.js">Monkeys.js</a>, <a href="monkeys.json">monkeys.json</a></li>
   </ul>
   <div class="narrative">
-    This enhancement focuses on data persistence using MongoDB with Mongoose. I replaced static data structures with database-backed models for Dogs and Monkeys, implementing schema validation and CRUD operations. This allowed me to create a scalable and persistent data layer while maintaining data integrity through middleware validation. I demonstrated knowledge of NoSQL modeling, query design, and integration of Mongoose into a Node.js application.
+    This enhancement focuses on data persistence using MongoDB with Mongoose...
   </div>
 
-  <footer>
-    &copy; 2025 Emireth Castro | CS 499 Capstone Portfolio | Southern New Hampshire University
-  </footer>
+  <h2 id="narratives">📄 Narratives</h2>
+  <ul>
+    <li><a href="Software_Design_Narrative.pdf">Software Design & Engineering Narrative (PDF)</a></li>
+    <li><a href="Algorithms_Narrative.pdf">Algorithms & Data Structures Narrative (PDF)</a></li>
+    <li><a href="Databases_Narrative.pdf">Databases Narrative (PDF)</a></li>
+  </ul>
 
+  <h2>🔗 Links</h2>
+  <ul>
+    <li><a href="https://github.com/delfin7emi" target="_blank">GitHub Profile</a></li>
+    <li><a href="#">LinkedIn (Optional)</a></li>
+  </ul>
+
+  <footer>
+    © 2025 Emireth Castro | CS 499 Capstone Portfolio | Southern New Hampshire University
+  </footer>
 </body>
 </html>
