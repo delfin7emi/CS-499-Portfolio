@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Emireth Castro - CS 499 ePortfolio</title>
-  <link rel="stylesheet" href="styles.css" />
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -13,16 +12,18 @@
       color: #222;
     }
 
+    h1, h2 {
+      color: #004080;
+    }
+
     h1 {
       text-align: center;
-      color: #004080;
     }
 
     h2 {
       border-bottom: 2px solid #ccc;
       padding-bottom: 6px;
       margin-top: 40px;
-      color: #003366;
     }
 
     ul {
@@ -57,37 +58,52 @@
 <body>
 
   <h1>Welcome to My CS 499 ePortfolio</h1>
-  <p>This site showcases the original and enhanced artifacts I developed throughout the SNHU Computer Science program, aligned with the five course outcomes. Each enhancement demonstrates applied skills, improvements, and reflective practice in software design, algorithms, and databases.</p>
+  <p>This portfolio presents the original and enhanced software artifacts I developed throughout my Computer Science degree at Southern New Hampshire University. Each enhancement aligns with one or more course outcomes and demonstrates proficiency in software engineering, algorithmic thinking, and data management.</p>
 
-  <!-- Enhancement 1: Software Design & Engineering -->
+  <!-- Software Design & Engineering -->
   <h2>🔧 Software Design & Engineering</h2>
   <ul>
-    <li><strong>Original Artifact:</strong> <a href="Dog.java" target="_blank">Dog.java</a>, <a href="Driver.java" target="_blank">Driver.java</a></li>
-    <li><strong>Enhanced Artifact:</strong> <a href="webapp/backend/server.js" target="_blank">server.js</a>, <a href="webapp/backend/models/Dogs.js" target="_blank">Dogs.js (Mongoose Model)</a></li>
+    <li><strong>Original Artifacts:</strong> <a href="Dog.java" target="_blank">Dog.java</a>, <a href="Driver.java" target="_blank">Driver.java</a></li>
+    <li><strong>Enhanced Artifacts:</strong> <a href="webapp/backend/server.js" target="_blank">server.js</a>, <a href="webapp/backend/models/Dogs.js" target="_blank">Dogs.js (Mongoose Model)</a></li>
   </ul>
   <div class="narrative">
-    For this enhancement, I transitioned my original Java-based rescue animal system into a full-stack web application using Node.js and Express. I implemented a modular architecture with separate model, route, and middleware layers, applying RESTful design and following best practices in maintainability. The improvement focuses on clarity, scalability, and reusability of components, reflecting real-world backend service design. This allowed me to demonstrate my skills in clean architecture and development using JavaScript and Express.js.
+    This enhancement transformed my Java-based console application into a modular full-stack Node.js backend. I applied REST principles, separated concerns into model/controller/service layers, and implemented backend validation. This redesign reflects real-world backend service architecture and fulfills software design and maintainability outcomes.
   </div>
 
-  <!-- Enhancement 2: Algorithms & Data Structures -->
+  <!-- Algorithms & Data Structures -->
   <h2>🧠 Algorithms & Data Structures</h2>
   <ul>
-    <li><strong>Original Artifact:</strong> <a href="RescueAnimal.java" target="_blank">RescueAnimal.java</a>, <a href="Monkey.java" target="_blank">Monkey.java</a></li>
-    <li><strong>Enhanced Artifact:</strong> <a href="webapp/backend/utils/binarySearch.js" target="_blank">binarySearch.js</a>, <a href="webapp/backend/tests/binarySearch.test.js" target="_blank">binarySearch.test.js</a></li>
+    <li><strong>Original Artifacts:</strong> <a href="RescueAnimal.java" target="_blank">RescueAnimal.java</a>, <a href="Monkey.java" target="_blank">Monkey.java</a></li>
+    <li><strong>Enhanced Artifacts:</strong> <a href="webapp/backend/utils/binarySearch.js" target="_blank">binarySearch.js</a>, <a href="webapp/backend/tests/binarySearch.test.js" target="_blank">binarySearch.test.js</a></li>
   </ul>
   <div class="narrative">
-    The goal of this enhancement was to demonstrate algorithm optimization by replacing linear search with a binary search implementation. I created a utility function for efficient lookups by ID and integrated it into both monkey and dog search routes. The enhancement also included unit tests to validate correctness. This shows how I applied algorithmic principles to improve performance and reduce time complexity from O(n) to O(log n), demonstrating real-world problem solving in data handling.
+    I replaced inefficient linear searches with a binary search algorithm implemented in JavaScript. This reduced the time complexity from O(n) to O(log n). I also created unit tests to validate the function against edge cases. The enhancement shows proficiency in algorithm optimization and testing strategies using Jest.
   </div>
 
-  <!-- Enhancement 3: Databases -->
+  <!-- Databases -->
   <h2>💾 Databases</h2>
   <ul>
-    <li><strong>Original Artifact:</strong> <a href="Monkey.java" target="_blank">Monkey.java</a>, <a href="Driver.java" target="_blank">Driver.java</a></li>
-    <li><strong>Enhanced Artifact:</strong> <a href="webapp/backend/models/Monkeys.js" target="_blank">Monkeys.js</a>, <a href="webapp/backend/data/monkeys.json" target="_blank">monkeys.json</a></li>
+    <li><strong>Original Artifacts:</strong> <a href="Monkey.java" target="_blank">Monkey.java</a>, <a href="Driver.java" target="_blank">Driver.java</a></li>
+    <li><strong>Enhanced Artifacts:</strong> <a href="webapp/backend/models/Monkeys.js" target="_blank">Monkeys.js</a>, <a href="webapp/backend/data/monkeys.json" target="_blank">monkeys.json</a></li>
   </ul>
   <div class="narrative">
-    This enhancement focuses on data persistence using MongoDB with Mongoose. I replaced static data structures with database-backed models for Dogs and Monkeys, implementing schema validation and CRUD operations. This allowed me to create a scalable and persistent data layer while maintaining data integrity through middleware validation. I demonstrated knowledge of NoSQL modeling, query design, and integration of Mongoose into a Node.js application.
+    I implemented MongoDB and Mongoose to replace static data. My models use schema validation and middleware for data integrity. CRUD functionality is exposed via API endpoints. This shows understanding of NoSQL database integration, schema design, and backend persistence using Mongoose in Node.js.
   </div>
+
+  <!-- Narratives -->
+  <h2>📄 Narratives</h2>
+  <ul>
+    <li><a href="docs/software-engineering-narrative.pdf" target="_blank">Software Design & Engineering Narrative (PDF)</a></li>
+    <li><a href="docs/algorithms-data-structure-narrative.pdf" target="_blank">Algorithms & Data Structures Narrative (PDF)</a></li>
+    <li><a href="docs/database-narrative.pdf" target="_blank">Databases Narrative (PDF)</a></li>
+  </ul>
+
+  <!-- Optional Links -->
+  <h2>🔗 Links</h2>
+  <ul>
+    <li><a href="https://github.com/delfin7emi" target="_blank">GitHub Profile</a></li>
+    <li><a href="https://www.linkedin.com/in/YOURPROFILE" target="_blank">LinkedIn (Optional)</a></li>
+  </ul>
 
   <footer>
     &copy; 2025 Emireth Castro | CS 499 Capstone Portfolio | Southern New Hampshire University
