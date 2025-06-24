@@ -5,123 +5,146 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Emireth Castro – CS 499 ePortfolio</title>
   <style>
+    :root {
+      --primary-bg: linear-gradient(to bottom, #dfe8d2, #f7f1e5);
+      --text-color: #222;
+      --accent-color: #5a6e3f;
+      --button-bg: #7a8450;
+      --hover-bg: #4d5a30;
+      --dark-bg: #2c2f24;
+      --dark-text: #f4f4f4;
+      --dark-accent: #88b36b;
+    }
+
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      background: linear-gradient(to bottom, #f4f1ea, #dde2d1);
-      color: #2f2f2f;
+      background: var(--primary-bg);
+      color: var(--text-color);
+      transition: all 0.3s ease;
     }
+
+    .dark-mode {
+      background: var(--dark-bg);
+      color: var(--dark-text);
+    }
+
     header.hero {
-      background: linear-gradient(to right, #a1b58f, #9dbfa3);
+      background: linear-gradient(to right, #8fa776, #b7a87f);
       color: white;
       text-align: center;
       padding: 60px 20px;
     }
+
     header.hero h1 {
-      font-size: 2.8em;
-      margin-bottom: 10px;
+      font-size: 2.5em;
+      margin: 0;
     }
-    header.hero p {
-      font-size: 1.2em;
-    }
+
     .nav-buttons {
       text-align: center;
-      margin-top: 30px;
-      margin-bottom: 40px;
+      padding: 20px;
     }
+
     .nav-btn {
       display: inline-block;
-      margin: 0 10px;
+      margin: 8px;
       padding: 10px 20px;
-      background-color: #78866b;
-      color: #fff;
+      background-color: var(--button-bg);
+      color: white;
       border: none;
       border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
+      transition: background-color 0.3s;
     }
+
     .nav-btn:hover {
-      background-color: #5e6f58;
+      background-color: var(--hover-bg);
     }
+
     main {
-      padding: 40px;
       max-width: 960px;
       margin: auto;
+      padding: 40px 20px;
     }
-    h2 {
-      color: #4a593d;
-      border-bottom: 2px solid #b8c4a0;
+
+    h2, h3 {
+      border-bottom: 2px solid #ccc;
       padding-bottom: 6px;
-      margin-top: 50px;
+      margin-top: 40px;
     }
-    h3 {
-      color: #6a7d59;
+
+    .video-wrapper {
+      text-align: center;
       margin-top: 20px;
     }
-    ul {
-      line-height: 1.8;
-    }
-    a {
-      color: #405c3b;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .narrative-buttons a.button {
-      display: inline-block;
-      background-color: #a3b18a;
-      color: white;
-      padding: 10px 15px;
-      margin: 5px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .narrative-buttons a.button:hover {
-      background-color: #879b71;
-    }
+
     iframe {
-      max-width: 100%;
-      height: 480px;
+      width: 100%;
+      max-width: 560px;
+      height: 315px;
       border: none;
       border-radius: 10px;
     }
-    .video-wrapper {
-      text-align: center;
-      margin-top: 30px;
+
+    .narrative-buttons a {
+      display: inline-block;
+      background-color: var(--button-bg);
+      color: white;
+      padding: 10px 16px;
+      margin: 8px;
+      border-radius: 6px;
+      font-weight: bold;
+      text-decoration: none;
     }
+
+    .narrative-buttons a:hover {
+      background-color: var(--hover-bg);
+    }
+
     .icon {
       width: 20px;
       vertical-align: middle;
       margin-right: 5px;
     }
+
     footer {
       margin-top: 60px;
-      font-size: 0.9em;
-      text-align: center;
-      color: #555;
       padding: 20px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
     }
+
     #topBtn {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      padding: 10px 15px;
-      background-color: #357ABD;
+      background-color: #3a7ca5;
       color: white;
-      font-weight: bold;
       border: none;
-      border-radius: 10px;
+      padding: 12px 20px;
+      border-radius: 8px;
       cursor: pointer;
+      font-weight: bold;
     }
-    #topBtn:hover {
-      background-color: #2b5e84;
+
+    #toggleDark {
+      float: right;
+      margin: 10px;
+      padding: 8px 12px;
+      background-color: var(--accent-color);
+      color: white;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <header class="hero">
+    <button id="toggleDark">🌗 Dark Mode</button>
     <h1>🌿 Emireth Castro's CS 499 ePortfolio</h1>
     <p>A showcase of software engineering, full-stack design, and algorithmic development</p>
   </header>
@@ -138,49 +161,49 @@
   <main>
     <section id="about">
       <h2>📘 About</h2>
-      <p>Welcome! I'm Emireth Castro, a Computer Science student at Southern New Hampshire University. This portfolio reflects my journey through the CS program and highlights how I transformed basic academic artifacts into modern, secure, full-stack applications. I’ve worked extensively with JavaScript, Node.js, Express, MongoDB, and React—focusing on clean design, validation, authentication, and scalable structure.</p>
+      <p>Hello! I'm Emireth Castro, a Computer Science student at Southern New Hampshire University. This portfolio is a reflection of my journey through software development—showcasing everything from foundational Java programs to a fully featured MERN stack rescue animal management system. It includes enhanced versions of my original coursework with added functionality, secure coding, and modern best practices.</p>
     </section>
 
     <section id="code-review">
       <h2>🧪 Code Review</h2>
-      <p>This screencast walks through my project enhancements, including secure coding principles, RESTful design, and modular implementation.</p>
+      <p>This section includes a recorded code walkthrough where I explain my enhancements, modular design decisions, and testing techniques.</p>
       <div class="video-wrapper">
-        <h3>🎥 Watch My Code Review</h3>
-        <iframe src="https://www.youtube.com/embed/X_CrW1wisrI" allowfullscreen title="Code Review Video"></iframe>
+        <iframe src="https://www.youtube.com/embed/X_CrW1wisrI" allowfullscreen></iframe>
       </div>
     </section>
 
     <section id="original-artifacts">
       <h2>🔧 Original Artifacts</h2>
       <ul>
-        <li><strong>Software Design:</strong> Java-based rescue animal management system</li>
-        <li><strong>Algorithms:</strong> Binary and linear search on in-memory records</li>
-        <li><strong>Databases:</strong> Text files upgraded to MongoDB with validation</li>
+        <li><strong>Software Design:</strong> Java terminal-based rescue animal system</li>
+        <li><strong>Algorithms:</strong> In-memory search logic for dog and monkey IDs</li>
+        <li><strong>Databases:</strong> Java-based storage using arrays and text files</li>
       </ul>
     </section>
 
     <section id="enhancements">
       <h2>🚀 Enhancements</h2>
 
-      <h3>🛠️ Software Engineering & Design</h3>
-      <p>I converted the original monolithic Java app into a modern MERN stack application. This version includes RESTful routes, secure login with JWT, and UI enhancements like image upload via Cloudinary.</p>
+      <h3>Software Engineering & Design</h3>
+      <p>Converted my Java terminal app into a modular, full-stack MERN web app. Includes REST API, JWT auth, Cloudinary upload, and React front-end.</p>
       <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/software-design-enhancement" target="_blank">🔗 View the Software Design Repository</a></p>
 
-      <h3>📐 Algorithms & Data Structures</h3>
-      <p>Optimized data retrieval using binary search. All search routes were redesigned to improve performance and were verified through Jest and Supertest.</p>
+      <h3>Algorithms & Data Structures</h3>
+      <p>Implemented a binary search and integrated it into both dog and monkey data handlers with test coverage using Jest and Supertest.</p>
       <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/algorithms-data-structure-enhancement" target="_blank">🔗 View the Algorithms Repository</a></p>
 
-      <h3>🗄️ Databases</h3>
-      <p>Replaced static text files with structured data models in MongoDB using Mongoose. Added validations, flexible queries, and RESTful API support.</p>
+      <h3>Databases</h3>
+      <p>Transitioned animal data to MongoDB with Mongoose. Added schema validation, secure API endpoints, and replaced static `.txt` files with persistent NoSQL storage.</p>
       <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/database-enhancement" target="_blank">🔗 View the Databases Repository</a></p>
     </section>
 
     <section id="narratives">
       <h2>📄 Narratives</h2>
+      <p>These PDF documents reflect the design process, problems solved, and lessons learned during each enhancement.</p>
       <div class="narrative-buttons">
-        <a class="button" href="software-design-enhancement.pdf" target="_blank">📄 Software Design PDF</a>
-        <a class="button" href="Algorithms_Narrative.pdf" target="_blank">📄 Algorithms PDF</a>
-        <a class="button" href="Databases_Narrative.pdf" target="_blank">📄 Databases PDF</a>
+        <a href="software-design-enhancement.pdf" target="_blank">📄 Software Design PDF</a>
+        <a href="Algorithms_Narrative.pdf" target="_blank">📄 Algorithms PDF</a>
+        <a href="Databases_Narrative.pdf" target="_blank">📄 Databases PDF</a>
       </div>
     </section>
 
@@ -188,20 +211,27 @@
       <h2>🔗 Links</h2>
       <ul>
         <li><a href="https://github.com/delfin7emi" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" class="icon">GitHub Profile</a></li>
-        <li><a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" class="icon">LinkedIn (Optional)</a></li>
+        <li><a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" class="icon">LinkedIn (Coming Soon)</a></li>
       </ul>
     </section>
 
     <section id="author">
       <h2>👩‍💻 About the Author</h2>
-      <p>Hello! I’m Emireth Castro, a dedicated Computer Science student with a passion for secure, full-stack development. I enjoy bringing academic concepts to life through real projects—focusing on clean code, modular structure, and usability. I built this website from scratch using HTML, CSS, and GitHub Pages as a reflection of my learning and growth throughout the capstone journey.</p>
+      <p>Hi! I'm Emireth Castro—a passionate Computer Science student who loves bringing ideas to life through code. I enhanced this site using HTML, CSS, and JavaScript to reflect my growth in web development. Every feature here—from dark mode to responsive layouts—was added to demonstrate my skills in building user-friendly and modern web interfaces.</p>
     </section>
   </main>
-
-  <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" id="topBtn">↑ Top</button>
 
   <footer>
     © 2025 Emireth Castro | CS 499 Capstone Portfolio | Southern New Hampshire University
   </footer>
+
+  <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" id="topBtn">↑ Top</button>
+
+  <script>
+    const toggleBtn = document.getElementById('toggleDark');
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+    });
+  </script>
 </body>
 </html>
