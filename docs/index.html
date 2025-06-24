@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Emireth Castro – CS 499 ePortfolio</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      background: linear-gradient(to bottom, #a9d4f2, #cce7f6, #e9f3f7);
+      background: linear-gradient(to bottom, #cce7f6, #e9f3f7);
       color: #222;
     }
 
@@ -17,6 +17,7 @@
       color: white;
       text-align: center;
       padding: 60px 20px;
+      animation: fadeIn 2s ease;
     }
 
     header.hero h1 {
@@ -30,7 +31,9 @@
 
     .nav-buttons {
       text-align: center;
-      margin: 30px 0 40px;
+      margin-top: 30px;
+      margin-bottom: 40px;
+      animation: slideIn 1.5s ease;
     }
 
     .nav-btn {
@@ -39,6 +42,7 @@
       padding: 10px 20px;
       background-color: #3a7ca5;
       color: #fff;
+      border: none;
       border-radius: 8px;
       text-decoration: none;
       font-weight: bold;
@@ -53,6 +57,7 @@
       padding: 40px;
       max-width: 960px;
       margin: auto;
+      animation: fadeIn 1s ease;
     }
 
     h2 {
@@ -64,12 +69,27 @@
 
     h3 {
       color: #3a7ca5;
-      margin-top: 25px;
+      margin-top: 20px;
+    }
+
+    .narrative-buttons a.button {
+      display: inline-block;
+      background-color: #467599;
+      color: white;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .narrative-buttons a.button:hover {
+      background-color: #365b76;
     }
 
     ul {
       line-height: 1.8;
-      padding-left: 20px;
     }
 
     a {
@@ -99,36 +119,6 @@
       border-radius: 10px;
     }
 
-    .narrative-buttons a.button {
-      display: inline-block;
-      background-color: #467599;
-      color: white;
-      padding: 10px 15px;
-      margin: 5px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background-color 0.3s;
-    }
-
-    .narrative-buttons a.button:hover {
-      background-color: #365b76;
-    }
-
-    #topBtn {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: #c58af9;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      padding: 12px 20px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
     footer {
       margin-top: 60px;
       font-size: 0.9em;
@@ -136,12 +126,30 @@
       color: #555;
       padding: 20px;
     }
+
+    #topBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #3a7ca5;
+      color: #fff;
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #topBtn:hover {
+      background-color: #2b5e84;
+    }
   </style>
 </head>
 <body>
   <header class="hero">
     <h1>🌍 Emireth Castro's CS 499 ePortfolio</h1>
-    <p>A showcase of software engineering, full-stack design, and algorithmic development</p>
+    <p>A showcase of software design, algorithmic thinking, and data engineering</p>
   </header>
 
   <div class="nav-buttons">
@@ -150,56 +158,64 @@
     <a href="#original-artifacts" class="nav-btn">Original Artifacts</a>
     <a href="#enhancements" class="nav-btn">Enhancements</a>
     <a href="#narratives" class="nav-btn">Narratives</a>
-    <a href="#links" class="nav-btn">Links</a>
   </div>
 
   <main>
     <section id="about">
       <h2>📘 About</h2>
-      <p>Welcome! This ePortfolio highlights my journey as a Computer Science student at Southern New Hampshire University. It contains original artifacts from earlier courses and enhanced versions developed using professional software practices. The project demonstrates full-stack MERN development, algorithmic thinking, and database design using MongoDB, Node.js, Express, React, and Java.</p>
+      <p>
+        This portfolio was developed as part of my CS 499 Capstone to demonstrate proficiency in software engineering, algorithms, and database systems. The featured project is a rescue animal management application originally built in Java and refactored into a modern full-stack web solution. Enhancements reflect best practices in code structure, search optimization, and persistent NoSQL data modeling with secure authentication.
+      </p>
     </section>
 
     <section id="code-review">
       <h2>🧪 Code Review</h2>
-      <p>Here is a narrated video walkthrough where I perform a code review of my enhancements using secure coding principles, unit testing, and modular architecture.</p>
+      <p>
+        This screencast presents a walkthrough of my project enhancements, demonstrating how I applied secure coding practices, improved logic structure, and integrated unit tests.
+      </p>
       <div class="video-wrapper">
         <h3>🎥 Watch My Code Review</h3>
-        <iframe src="https://www.youtube.com/embed/X_CrW1wisrI" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/X_CrW1wisrI" allowfullscreen title="Code Review Video"></iframe>
       </div>
     </section>
 
     <section id="original-artifacts">
       <h2>🔧 Original Artifacts</h2>
-      <p>My capstone artifacts were chosen from past SNHU assignments and refactored for modern full-stack design:</p>
+      <p>The following artifacts were selected from my academic work to showcase mastery of:</p>
       <ul>
-        <li><strong>Software Design:</strong> Java-based rescue animal terminal system</li>
-        <li><strong>Algorithms:</strong> Extended version with custom binary search and sorting</li>
-        <li><strong>Databases:</strong> Original used static files; now upgraded to MongoDB with Mongoose schema validation</li>
+        <li><strong>Software Engineering and Design:</strong> Java-based console program for rescue animal management</li>
+        <li><strong>Algorithms and Data Structures:</strong> Linear search logic and in-memory data models</li>
+        <li><strong>Databases:</strong> Text-file based persistence and static object storage</li>
       </ul>
     </section>
 
     <section id="enhancements">
       <h2>🚀 Enhancements</h2>
 
-      <h3>🛠 Software Engineering & Design</h3>
-      <p>Converted a procedural Java terminal app into a modular, full-stack MERN web app. Includes REST API, JWT auth, Cloudinary uploads, and React admin dashboard.</p>
-      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/software-design-enhancement" target="_blank">📁 View the Software Design Repository</a></p>
+      <h3>🛠️ Software Engineering and Design</h3>
+      <p>
+        I refactored the original Java console app into a modular full-stack web app using Node.js, Express, and MongoDB. The back end follows REST architecture and separates logic into models, controllers, and routes. Validation and authentication were added for secure interaction.
+      </p>
+      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/software-design-enhancement" target="_blank">Click here</a> to view this enhancement on GitHub.</p>
 
-      <h3>🧮 Algorithms & Data Structures</h3>
-      <p>Implemented a binary search algorithm and integrated it into both dog and monkey data handlers with test coverage using Jest and Supertest.</p>
-      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/algorithms-data-structure-enhancement" target="_blank">📁 View the Algorithms Repository</a></p>
+      <h3>📐 Algorithms and Data Structures</h3>
+      <p>
+        The application was optimized using binary search algorithms for dog and monkey IDs. Custom functions replaced inefficient loops, improving search performance and enabling reuse in multiple routes. Jest unit tests verify correct logic.
+      </p>
+      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/algorithms-data-structure-enhancement" target="_blank">Click here</a> to view this enhancement on GitHub.</p>
 
-      <h3>🗃️ Databases</h3>
-      <p>Transitioned animal data to MongoDB with Mongoose. Added schema validation, secure API endpoints, and replaced static `.txt` files with persistent NoSQL storage.</p>
-      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/database-enhancement" target="_blank">📁 View the Databases Repository</a></p>
+      <h3>🗄️ Databases</h3>
+      <p>
+        The static file storage was replaced with MongoDB and Mongoose schema models. CRUD endpoints and schema validation were added to ensure data integrity for dog and monkey records. All fields are validated and stored securely with environment-based URI configuration.
+      </p>
+      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/database-enhancement" target="_blank">Click here</a> to view this enhancement on GitHub.</p>
     </section>
 
     <section id="narratives">
       <h2>📄 Narratives</h2>
-      <p>These PDF documents reflect on the development process, improvements made, and challenges overcome during each enhancement.</p>
       <div class="narrative-buttons">
-        <a class="button" href="software-design-enhancement.pdf" target="_blank">📄 Software Design PDF</a>
-        <a class="button" href="Algorithms_Narrative.pdf" target="_blank">📄 Algorithms PDF</a>
+        <a class="button" href="software-design-enhancement.pdf" target="_blank">📄 Software Design & Engineering PDF</a>
+        <a class="button" href="Algorithms_Narrative.pdf" target="_blank">📄 Algorithms & Data Structures PDF</a>
         <a class="button" href="Databases_Narrative.pdf" target="_blank">📄 Databases PDF</a>
       </div>
     </section>
@@ -212,16 +228,17 @@
       </ul>
     </section>
 
-    <section>
+    <section id="author">
       <h2>👩‍💻 About the Author</h2>
-      <hr />
-      <p>I am Emireth Castro a Computer Science student with a focus on secure full-stack application development. Her experience includes working with React, Node.js, MongoDB, Java, REST APIs, and applying modern design principles to real-world software projects.</p>
-      <p>This page was built using GitHub Pages and enhanced with custom CSS styling. I customized the layout, button styles, navigation flow, PDF integration, and added animation and color theming to reflect my personal design preferences and technical skills.</p>
+      <p>
+        Emireth Castro is a Computer Science student with a passion for secure full-stack development. Her skills include building scalable web applications using JavaScript, MongoDB, React, and Express. She customized this portfolio using HTML, CSS, and GitHub Pages to reflect personal design preferences and modular layout practices.
+      </p>
     </section>
+  </main>
 
-<button onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" id="topBtn" style="background-color: #3a7ca5; color: #fff; border: none; border-radius: 10px; padding: 12px 20px; cursor: pointer; font-size: 16px; font-weight: bold;">↑ Top</button>
+  <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' });" id="topBtn">↑ Top</button>
 
-    <footer>
+  <footer>
     © 2025 Emireth Castro | CS 499 Capstone Portfolio | Southern New Hampshire University
   </footer>
 </body>
