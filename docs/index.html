@@ -25,19 +25,11 @@
     header.hero p {
       font-size: 1.2em;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
     .nav-buttons {
       text-align: center;
       margin-top: 30px;
       margin-bottom: 40px;
       animation: slideIn 1.5s ease;
-    }
-    @keyframes slideIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
     }
     .nav-btn {
       display: inline-block;
@@ -70,6 +62,20 @@
       color: #3a7ca5;
       margin-top: 20px;
     }
+    .narrative-buttons a.button {
+      display: inline-block;
+      background-color: #467599;
+      color: white;
+      padding: 10px 15px;
+      margin: 5px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+    .narrative-buttons a.button:hover {
+      background-color: #365b76;
+    }
     ul {
       line-height: 1.8;
     }
@@ -79,6 +85,13 @@
     }
     a:hover {
       text-decoration: underline;
+    }
+    footer {
+      margin-top: 60px;
+      font-size: 0.9em;
+      text-align: center;
+      color: #555;
+      padding: 20px;
     }
     .icon {
       width: 20px;
@@ -95,26 +108,13 @@
       border: none;
       border-radius: 10px;
     }
-    .narrative-buttons a.button {
-      display: inline-block;
-      background-color: #467599;
-      color: white;
-      padding: 10px 15px;
-      margin: 5px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background-color 0.3s;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .narrative-buttons a.button:hover {
-      background-color: #365b76;
-    }
-    footer {
-      margin-top: 60px;
-      font-size: 0.9em;
-      text-align: center;
-      color: #555;
-      padding: 20px;
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -142,20 +142,12 @@
       <h2>🧪 Code Review</h2>
       <p>This screencast walks through code enhancements with attention to readability, modularity, and secure coding guidelines.</p>
       <div class="video-wrapper">
-        <h3>🎥 Watch My Code Review</h3>
         <iframe src="https://www.youtube.com/embed/X_CrW1wisrI" allowfullscreen title="Code Review Video"></iframe>
       </div>
     </section>
 
     <section id="original-artifacts">
       <h2>🔧 Original Artifacts</h2>
-      <p>For the CS-499 Capstone project, students are asked to select one or more artifacts in the following categories:</p>
-      <ul>
-        <li>Software Engineering and Design</li>
-        <li>Algorithms and Data Structures</li>
-        <li>Databases</li>
-      </ul>
-      <p>Artifacts may come from prior SNHU courses, projects from work, or open-source projects. As a demonstration, I have selected the following artifacts:</p>
       <ul>
         <li><strong>Software Engineering and Design:</strong> A full-stack rescue animal manager originally written in Java.</li>
         <li><strong>Algorithms and Data Structures:</strong> The same application extended with custom data structures and searching techniques.</li>
@@ -167,22 +159,22 @@
       <h2>🚀 Enhancements</h2>
       <h3>Software Engineering and Design</h3>
       <p>For this enhancement, I transitioned my original Java-based rescue animal system into a full-stack web application using Node.js and Express.</p>
-      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/software-design-enhancement" target="_blank">Click here</a> to view the Software Engineering and Design repository for this enhancement.</p>
+      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/software-design-enhancement" target="_blank">Click here</a> to view the Software Engineering and Design repository.</p>
 
       <h3>Algorithms and Data Structures</h3>
       <p>I replaced inefficient linear searches with a binary search algorithm implemented in JavaScript, improving time complexity and validating logic with unit tests.</p>
-      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/algorithms-data-structure-enhancement" target="_blank">Click here</a> to view the Algorithms and Data Structures repository for this enhancement.</p>
+      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/algorithms-data-structure-enhancement" target="_blank">Click here</a> to view the Algorithms and Data Structures repository.</p>
 
       <h3>Databases</h3>
       <p>I implemented MongoDB and Mongoose to replace static data. CRUD operations and schema validation were added to manage dog and monkey data effectively.</p>
-      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/database-enhancement" target="_blank">Click here</a> to view the Databases repository for this enhancement.</p>
+      <p><a href="https://github.com/delfin7emi/CS-499-Portfolio/tree/database-enhancement" target="_blank">Click here</a> to view the Databases repository.</p>
     </section>
 
     <section id="narratives">
-      <h2>📄 Narratives</h2>
+      <h2>📄 Narrative PDF Downloads</h2>
       <div class="narrative-buttons">
-        <a class="button" href="software-design-enhancement.pdf" target="_blank">📄 Software Design & Engineering PDF</a>
-        <a class="button" href="Algorithms_Narrative.pdf" target="_blank">📄 Algorithms & Data Structures PDF</a>
+        <a class="button" href="software-design-enhancement.pdf" target="_blank">📄 Software Design PDF</a>
+        <a class="button" href="Algorithms_Narrative.pdf" target="_blank">📄 Algorithms PDF</a>
         <a class="button" href="Databases_Narrative.pdf" target="_blank">📄 Databases PDF</a>
       </div>
     </section>
