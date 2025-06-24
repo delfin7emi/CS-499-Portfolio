@@ -7,29 +7,79 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      margin: 40px;
-      background-color: #fdfdfd;
+      margin: 0;
+      background: linear-gradient(to bottom, #cce7f6, #e9f3f7);
       color: #222;
     }
 
-    h1, h2 {
-      color: #004080;
+    header.hero {
+      background: linear-gradient(to right, #3a7ca5, #5dade2);
+      color: white;
+      text-align: center;
+      padding: 60px 20px;
+      animation: fadeIn 2s ease;
     }
 
-    h1 {
-      text-align: center;
+    header.hero h1 {
+      font-size: 2.8em;
       margin-bottom: 10px;
     }
 
+    header.hero p {
+      font-size: 1.2em;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-buttons {
+      text-align: center;
+      margin-top: 30px;
+      margin-bottom: 40px;
+      animation: slideIn 1.5s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-btn {
+      display: inline-block;
+      margin: 0 10px;
+      padding: 10px 20px;
+      background-color: #3a7ca5;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+    }
+
+    .nav-btn:hover {
+      background-color: #2b5e84;
+    }
+
+    main {
+      padding: 40px;
+      max-width: 960px;
+      margin: auto;
+      animation: fadeIn 1s ease;
+    }
+
     h2 {
+      color: #004060;
       border-bottom: 2px solid #ccc;
       padding-bottom: 6px;
       margin-top: 50px;
     }
 
     .narrative {
-      background-color: #f9f9f9;
-      border-left: 4px solid #ccc;
+      background-color: #f0f9fc;
+      border-left: 4px solid #a3c5d9;
       padding: 15px;
       margin: 10px 30px 30px 0;
       font-size: 1em;
@@ -49,40 +99,27 @@
       text-decoration: underline;
     }
 
-    .nav-buttons {
-      text-align: center;
-      margin-top: 30px;
-      margin-bottom: 40px;
-    }
-
-    .nav-btn {
-      display: inline-block;
-      margin: 0 10px;
-      padding: 10px 20px;
-      background-color: #673ab7;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background-color 0.3s ease;
-    }
-
-    .nav-btn:hover {
-      background-color: #512da8;
-    }
-
     footer {
       margin-top: 60px;
       font-size: 0.9em;
       text-align: center;
       color: #555;
+      padding: 20px;
+    }
+
+    .icon {
+      width: 20px;
+      vertical-align: middle;
+      margin-right: 5px;
     }
   </style>
 </head>
 <body>
 
-  <h1 id="about">Welcome to My CS 499 ePortfolio</h1>
+  <header class="hero">
+    <h1>🌍 Emireth Castro's CS 499 ePortfolio</h1>
+    <p>A showcase of software design, algorithmic thinking, and data engineering</p>
+  </header>
 
   <div class="nav-buttons">
     <a href="#about" class="nav-btn">About</a>
@@ -92,47 +129,51 @@
     <a href="#narratives" class="nav-btn">Narratives</a>
   </div>
 
-  <p>This site showcases the original and enhanced artifacts I developed throughout the SNHU Computer Science program, aligned with the five course outcomes. Each enhancement demonstrates applied skills, improvements, and reflective practice in software design, algorithms, and databases.</p>
+  <main>
+    <section id="about">
+      <p>This site showcases the original and enhanced artifacts I developed throughout the SNHU Computer Science program, aligned with the five course outcomes. Each enhancement demonstrates applied skills, improvements, and reflective practice in software design, algorithms, and databases.</p>
+    </section>
 
-  <h2 id="original-artifacts">🔧 Software Design & Engineering</h2>
-  <ul>
-    <li><strong>Original Artifact:</strong> <a href="Dog.java">Dog.java</a>, <a href="Driver.java">Driver.java</a></li>
-    <li><strong>Enhanced Artifact:</strong> <a href="server.js">server.js</a>, <a href="Dogs.js">Dogs.js (Mongoose Model)</a></li>
-  </ul>
-  <div class="narrative">
-    For this enhancement, I transitioned my original Java-based rescue animal system into a full-stack web application using Node.js and Express...
-  </div>
+    <h2 id="original-artifacts">🔧 Software Design & Engineering</h2>
+    <ul>
+      <li><strong>Original Artifact:</strong> <a href="Dog.java">Dog.java</a>, <a href="Driver.java">Driver.java</a></li>
+      <li><strong>Enhanced Artifact:</strong> <a href="server.js">server.js</a>, <a href="Dogs.js">Dogs.js (Mongoose Model)</a></li>
+    </ul>
+    <div class="narrative">
+      For this enhancement, I transitioned my original Java-based rescue animal system into a full-stack web application using Node.js and Express...
+    </div>
 
-  <h2 id="enhancements">🧠 Algorithms & Data Structures</h2>
-  <ul>
-    <li><strong>Original Artifact:</strong> <a href="RescueAnimal.java">RescueAnimal.java</a>, <a href="Monkey.java">Monkey.java</a></li>
-    <li><strong>Enhanced Artifact:</strong> <a href="binarySearch.js">binarySearch.js</a>, <a href="binarySearch.test.js">binarySearch.test.js</a></li>
-  </ul>
-  <div class="narrative">
-    The goal of this enhancement was to demonstrate algorithm optimization by replacing linear search with a binary search implementation...
-  </div>
+    <h2 id="enhancements">🧠 Algorithms & Data Structures</h2>
+    <ul>
+      <li><strong>Original Artifact:</strong> <a href="RescueAnimal.java">RescueAnimal.java</a>, <a href="Monkey.java">Monkey.java</a></li>
+      <li><strong>Enhanced Artifact:</strong> <a href="binarySearch.js">binarySearch.js</a>, <a href="binarySearch.test.js">binarySearch.test.js</a></li>
+    </ul>
+    <div class="narrative">
+      The goal of this enhancement was to demonstrate algorithm optimization by replacing linear search with a binary search implementation...
+    </div>
 
-  <h2>💾 Databases</h2>
-  <ul>
-    <li><strong>Original Artifact:</strong> <a href="Monkey.java">Monkey.java</a>, <a href="Driver.java">Driver.java</a></li>
-    <li><strong>Enhanced Artifact:</strong> <a href="Monkeys.js">Monkeys.js</a>, <a href="monkeys.json">monkeys.json</a></li>
-  </ul>
-  <div class="narrative">
-    This enhancement focuses on data persistence using MongoDB with Mongoose...
-  </div>
+    <h2>💾 Databases</h2>
+    <ul>
+      <li><strong>Original Artifact:</strong> <a href="Monkey.java">Monkey.java</a>, <a href="Driver.java">Driver.java</a></li>
+      <li><strong>Enhanced Artifact:</strong> <a href="Monkeys.js">Monkeys.js</a>, <a href="monkeys.json" download>monkeys.json ⬇️</a></li>
+    </ul>
+    <div class="narrative">
+      This enhancement focuses on data persistence using MongoDB with Mongoose...
+    </div>
 
-  <h2 id="narratives">📄 Narratives</h2>
-  <ul>
-    <li><a href="Software_Design_Narrative.pdf">Software Design & Engineering Narrative (PDF)</a></li>
-    <li><a href="Algorithms_Narrative.pdf">Algorithms & Data Structures Narrative (PDF)</a></li>
-    <li><a href="Databases_Narrative.pdf">Databases Narrative (PDF)</a></li>
-  </ul>
+    <h2 id="narratives">📄 Narratives</h2>
+    <ul>
+      <li><a href="Software_Design_Narrative.pdf" download>Software Design & Engineering Narrative (PDF) ⬇️</a></li>
+      <li><a href="Algorithms_Narrative.pdf" download>Algorithms & Data Structures Narrative (PDF) ⬇️</a></li>
+      <li><a href="Databases_Narrative.pdf" download>Databases Narrative (PDF) ⬇️</a></li>
+    </ul>
 
-  <h2>🔗 Links</h2>
-  <ul>
-    <li><a href="https://github.com/delfin7emi" target="_blank">GitHub Profile</a></li>
-    <li><a href="#">LinkedIn (Optional)</a></li>
-  </ul>
+    <h2>🔗 Links</h2>
+    <ul>
+      <li><a href="https://github.com/delfin7emi" target="_blank"><img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" class="icon" />GitHub Profile</a></li>
+      <li><a href="#"><img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" class="icon" />LinkedIn (Optional)</a></li>
+    </ul>
+  </main>
 
   <footer>
     © 2025 Emireth Castro | CS 499 Capstone Portfolio | Southern New Hampshire University
